@@ -14,7 +14,6 @@ def calculate_entropy(n1, n2, t):
 
     return 0.0 if round(-p1 * log1 - p2 * log2, 2) == 0.0 else round(-p1 * log1 - p2 * log2, 2)
 
-
 def calculate_condent(n1, n2, t, e1, e2):
     p1 = n1/t
     p2 = n2/t
@@ -49,7 +48,7 @@ def create_mathjax_content(info):
         src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML">
     </script>
 
-    <div style="text-align: center; font-size: 17px; font-weight: normal; color: #1F4A89; line-height: 1;">
+    <div style="text-align: top; font-size: 17px; font-weight: normal; color: #1F4A89; line-height: 1;">
     """
     
     # Add the selected line based on the `step`
@@ -87,6 +86,44 @@ ui.page_opts(
     page_fn=partial(page_navbar, id="page"),
     fillable=True,
 )
+
+def make_normal_text(text):
+    return ui.tags.span(ui.HTML(f"""
+            <span style="font-size: 17px; font-weight: normal; color: #1F4A89; line-height: 1; vertical-align: middle;">
+                \\({text}\\)
+            </span>
+        """))
+
+with ui.nav_panel("Test"):
+    with ui.tags.div(style="text-align: center;"):
+
+        # Tooltip only for H(Y) = -
+        with ui.tooltip(id="btn_tooltip", placement="right"):  
+            ui.tags.span(ui.HTML(f"""
+                                <script type="text/javascript" async 
+                                    src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML">
+                                </script>
+                                <span style="text-align: center; font-size: 17px; font-weight: normal; color: #1F4A89; line-height: 1;">
+                                    \\(H(Y)\\)
+                                </span>
+                                    
+                                
+                            """))
+            ui.HTML(f"""
+                    <script type="text/javascript" async 
+                        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML">
+                    </script>
+                    \\(Y \\in \\lbrace oranges, lemons \\rbrace \\)""")  # Tooltip content
+
+        # "test" placed outside the tooltip but still inline
+        make_normal_text("= -")
+
+#H(Y) = -\\frac{lemons}{total}log_{2}\\frac{lemons}{total} -\\frac{oranges}{total}log_{2}\\frac{oranges}{total}\\approx{h_y}\\
+
+    @render.text
+    def btn_tooltip_state():
+        return f"Tooltip state: {input.btn_tooltip()}"
+
 
 # Information gain page
 with ui.nav_panel("Information Gain"):
@@ -145,7 +182,11 @@ with ui.nav_panel("Information Gain"):
                     marker=dict(
                         color='red',
                         size=12,
-                        symbol='circle'
+                        symbol='circle',
+                        line=dict(
+                            color=['black', 'black', 'black', 'white', 'black'],  # Outline for some points
+                            width=[2, 0, 2, 0, 2]  # 0 width removes outline for some points
+                        )
                     )
                 ))
                 fig.add_trace(go.Scatter(
