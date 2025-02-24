@@ -67,7 +67,6 @@ def create_mathjax_content(info):
     
     return mathjax_html
 
-
 # Starter datapoints to plot
 o_points = reactive.value({'x': [1, 1, 5, 8, 8], 'y': [3, 7, 7, 4, 7]})
 l_points = reactive.value({'x': [5, 8], 'y': [4, 3]})
@@ -95,28 +94,28 @@ def make_normal_text(text):
         """))
 
 with ui.nav_panel("Test"):
-    with ui.tags.div(style="text-align: center;"):
+    @render.ui
+    def mathjax_output():
+        variable = str(vertical_split.get())  # Get variable input
+        return ui.HTML(f"""
+            <script type="text/javascript" async 
+                src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML">
+            </script>
 
-        # Tooltip only for H(Y) = -
-        with ui.tooltip(id="btn_tooltip", placement="right"):  
-            ui.tags.span(ui.HTML(f"""
-                                <script type="text/javascript" async 
-                                    src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML">
-                                </script>
-                                <span style="text-align: center; font-size: 17px; font-weight: normal; color: #1F4A89; line-height: 1;">
-                                    \\(H(Y)\\)
-                                </span>
-                                    
-                                
-                            """))
-            ui.HTML(f"""
-                    <script type="text/javascript" async 
-                        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML">
-                    </script>
-                    \\(Y \\in \\lbrace oranges, lemons \\rbrace \\)""")  # Tooltip content
+            <div style="text-align: center; font-size: 17px; font-weight: normal; color: #1F4A89; line-height: 1;">
+                <span id="math_tooltip" title="Tooltip text">\\(H({variable})\\)</span>
+            </div>
 
-        # "test" placed outside the tooltip but still inline
-        make_normal_text("= -")
+            <script>
+                document.getElementById("math_tooltip").addEventListener("mouseenter", function() {{
+                    Shiny.setInputValue("btn_tooltip", "Hovered", {{priority: "event"}});
+                }});
+                document.getElementById("math_tooltip").addEventListener("mouseleave", function() {{
+                    Shiny.setInputValue("btn_tooltip", "Not Hovered", {{priority: "event"}});
+                }});
+                MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
+            </script>
+        """)
 
 #H(Y) = -\\frac{lemons}{total}log_{2}\\frac{lemons}{total} -\\frac{oranges}{total}log_{2}\\frac{oranges}{total}\\approx{h_y}\\
 
@@ -411,8 +410,8 @@ with ui.nav_panel("Information Gain"):
                     )
             ui.div(style="flex-grow: 1;")
             # Text to display information gain
-            @render.ui()
-            @reactive.event(input.calculate_button)
+            #@render.ui()
+            #@reactive.event(input.calculate_button)
             def calculate():
                 side1 = "left" if vertical_split.get() else "below"
                 side2 = "right" if vertical_split.get() else "above"
@@ -451,8 +450,9 @@ with ui.nav_panel("Information Gain"):
                         ui.HTML(create_mathjax_content(info))
                     )
 
-            @render.ui()
-            def calculate_test():
+            @reactive.effect
+            @reactive.event(input.calculate_button)
+            def testing():
                 side1 = "left" if vertical_split.get() else "below"
                 side2 = "right" if vertical_split.get() else "above"
                 side1_orange = 0
@@ -479,26 +479,52 @@ with ui.nav_panel("Information Gain"):
                 h_yside2 = calculate_entropy(side2_lemon, side2_orange, side2s)
                 h_yx = calculate_condent(side1s, side2s, total, h_yside1, h_yside2)
                 infogain = calculate_infogain(h_y, h_yx)
-                if not input.calculate_button():
-                    return ui.p(
-                            ui.HTML(f"""
-                                <script type="text/javascript" async 
-                                    src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML">
-                                </script>
-                                    
-                                <div style="text-align: center; font-size: 17px; font-weight: normal; color: #1F4A89; line-height: 1;">
-                                    \\[H(Y) = -\\frac{lemons}{total}log_{2}\\frac{lemons}{total} -\\frac{oranges}{total}log_{2}\\frac{oranges}{total}\\approx{h_y}\\]<br>
-                                    \\[H(Y|{side1}) = -\\frac{side1_lemon}{side1s}log_{2}\\frac{side1_lemon}{side1s} -\\frac{side1_orange}{side1s}log_{2}\\frac{side1_orange}{side1s}\\approx{h_yside1}\\]<br>
-                                    \\[H(Y|{side2}) = -\\frac{side2_lemon}{side2s}log_{2}\\frac{side2_lemon}{side2s} -\\frac{side2_orange}{side2s}log_{2}\\frac{side2_orange}{side2s}\\approx{h_yside2}\\]<br>
-                                    \\[H(Y|X) = \\frac{side1s}{total}\\cdot{h_yside1} + \\frac{side2s}{total}\\cdot{h_yside2}\\approx{h_yx}\\]<br>
-                                    \\[IG(Y|X) = {h_y} - {h_yx} \\approx {infogain}\\]
-                                </div>
-                                    
-                                <script type="text/javascript">
-                                    MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
-                                </script>
-                            """)
-                        )
+                info = {'side1': side1, 'side2': side2, 'side1_orange': side1_orange,
+                        'side2_orange': side2_orange, 'side1_lemon': side1_lemon, 'side2_lemon': side2_lemon,
+                        'oranges': oranges, 'lemons': lemons, 'total': total,
+                        'side1s': side1s, 'side2s': side2s, 'h_y': h_y,
+                        'h_yside1': h_yside1, 'h_yside2': h_yside2, 'h_yx': h_yx,
+                        'infogain': infogain}
+                print("hi")
+                return info
+
+
+            @reactive.calc
+            def lemon_test():
+                return vertical_split.get()
+
+            with ui.tags.div(style="text-align: center;"):
+                # Tooltip only for H(Y)
+                with ui.tooltip(id="Y", placement="right"):  
+                    ui.tags.span(ui.HTML(f"""
+                                        <script type="text/javascript" async 
+                                            src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML">
+                                        </script>
+                                        <span style="text-align: center; font-size: 17px; font-weight: normal; color: #1F4A89; line-height: 1;">
+                                            \\(H(Y)\\)
+                                        </span>
+                                            
+                                        
+                                    """))
+                    ui.HTML(f"""
+                            <script type="text/javascript" async 
+                                src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML">
+                            </script>
+                            \\(Y \\in \\lbrace oranges, lemons \\rbrace \\)""")  # Tooltip content
+
+                # "test" placed outside the tooltip but still inline
+                make_normal_text("= -")
+                lemons = 1
+                total = 2
+                with ui.tooltip(id="lemon1", placement="right"):  
+                    ui.tags.span(ui.HTML(f"""
+                                                <span style="font-size: 17px; font-weight: normal; color: #1F4A89; line-height: 1; vertical-align: middle;">
+                                                    \\(\\frac{lemons}{total}log_{2}\\frac{lemons}{total}\\)
+                                                </span>
+                                            """))
+                    "test" 
+
+                #H(Y) = -\\frac{lemons}{total}log_{2}\\frac{lemons}{total} -\\frac{oranges}{total}log_{2}\\frac{oranges}{total}\\approx{h_y}\\
 
             # Button to calculate information gain
             with ui.layout_columns():
