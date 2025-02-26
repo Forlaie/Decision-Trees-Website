@@ -77,6 +77,8 @@ split_loc = reactive.value(3)
 notation = reactive.value(False)
 variables = reactive.value(False)
 definition = reactive.value(False)
+o_outline_width = reactive.value([0, 0, 0, 0, 0])
+l_outline_width = reactive.value([0, 0, 0, 0, 0])
 step = reactive.value(0)
 
 # Make main screen, with title and page navigation
@@ -93,35 +95,67 @@ def make_normal_text(text):
             </span>
         """))
 
-with ui.nav_panel("Test"):
-    @render.ui
-    def mathjax_output():
-        variable = str(vertical_split.get())  # Get variable input
-        return ui.HTML(f"""
-            <script type="text/javascript" async 
-                src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML">
-            </script>
+# with ui.nav_panel("Test"):
+#     @render.ui
+#     def mathjax_output():
+#         variable = str(vertical_split.get())  # Get variable input
+#         return ui.HTML(f"""
+#             <script type="text/javascript" async 
+#                 src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML">
+#             </script>
+                       
+#             <style>
+#                 .tooltip-custom {{
+#                     position: relative;
+#                     display: inline-block;
+#                     cursor: pointer;
+#                 }}
 
-            <div style="text-align: center; font-size: 17px; font-weight: normal; color: #1F4A89; line-height: 1;">
-                <span id="math_tooltip" title="Tooltip text">\\(H({variable})\\)</span>
-            </div>
+#                 .tooltip-custom::after {{
+#                     content: attr(data-tooltip);
+#                     position: absolute;
+#                     background-color: black;
+#                     color: white;
+#                     padding: 5px 10px;
+#                     border-radius: 5px;
+#                     top: 120%;
+#                     left: 50%;
+#                     transform: translateX(-50%);
+#                     white-space: nowrap;
+#                     font-size: 14px;
+#                     opacity: 0;
+#                     visibility: hidden;
+#                     transition: opacity 0.3s ease-in-out;
+#                 }}
 
-            <script>
-                document.getElementById("math_tooltip").addEventListener("mouseenter", function() {{
-                    Shiny.setInputValue("btn_tooltip", "Hovered", {{priority: "event"}});
-                }});
-                document.getElementById("math_tooltip").addEventListener("mouseleave", function() {{
-                    Shiny.setInputValue("btn_tooltip", "Not Hovered", {{priority: "event"}});
-                }});
-                MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
-            </script>
-        """)
+#                 .tooltip-custom:hover::after {{
+#                     opacity: 1;
+#                     visibility: visible;
+#                 }}
+#     </style>
 
-#H(Y) = -\\frac{lemons}{total}log_{2}\\frac{lemons}{total} -\\frac{oranges}{total}log_{2}\\frac{oranges}{total}\\approx{h_y}\\
+#             <div style="text-align: center; font-size: 17px; font-weight: normal; color: #1F4A89; line-height: 1;">
+#                 <span>\\(H(\\)
+#                 <span id="math_tooltip" class="tooltip-custom" data-tooltip="Tooltip text">\\({variable}\\)</span>
+#                 <span>\\()=\\)
+#             </div>
 
-    @render.text
-    def btn_tooltip_state():
-        return f"Tooltip state: {input.btn_tooltip()}"
+#             <script>
+#                 document.getElementById("math_tooltip").addEventListener("mouseenter", function() {{
+#                     Shiny.setInputValue("btn_tooltip", "Hovered", {{priority: "event"}});
+#                 }});
+#                 document.getElementById("math_tooltip").addEventListener("mouseleave", function() {{
+#                     Shiny.setInputValue("btn_tooltip", "Not Hovered", {{priority: "event"}});
+#                 }});
+#                 MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
+#             </script>
+#         """)
+
+# #H(Y) = -\\frac{lemons}{total}log_{2}\\frac{lemons}{total} -\\frac{oranges}{total}log_{2}\\frac{oranges}{total}\\approx{h_y}\\
+
+#     @render.text
+#     def btn_tooltip_state():
+#         return f"Tooltip state: {input.btn_tooltip()}"
 
 
 # Information gain page
@@ -172,6 +206,7 @@ with ui.nav_panel("Information Gain"):
             @render_plotly
             def feature_plot():
                 fig = go.Figure()
+                print("test")
                 # Add orange points (circles)
                 fig.add_trace(go.Scatter(
                     x=o_points.get()['x'],
@@ -183,8 +218,8 @@ with ui.nav_panel("Information Gain"):
                         size=12,
                         symbol='circle',
                         line=dict(
-                            color=['black', 'black', 'black', 'white', 'black'],  # Outline for some points
-                            width=[2, 0, 2, 0, 2]  # 0 width removes outline for some points
+                            color=['black']*len(o_outline_width.get()),  # Outline for some points
+                            width=o_outline_width.get()  # 0 width removes outline for some points
                         )
                     )
                 ))
@@ -235,6 +270,7 @@ with ui.nav_panel("Information Gain"):
                     'y': curr_points['y'] + [y_coord.get()],
                 }
                 o_points.set(updated_points)
+                o_outline_width.get().append(0)
             
             # Add a new lemon datapoint button
             @reactive.effect
@@ -265,6 +301,7 @@ with ui.nav_panel("Information Gain"):
                         'y': curr_points['y'],
                     }
                     o_points.set(updated_points)
+                    o_outline_width.get().pop()
             
             # Remove a lemon datapoint button
             @reactive.effect
@@ -450,48 +487,83 @@ with ui.nav_panel("Information Gain"):
                         ui.HTML(create_mathjax_content(info))
                     )
 
+
+            @render.ui
+            def testing_mathjax():
+                variable = str(vertical_split.get())  # Get variable input
+                return ui.HTML(f"""
+                    <script type="text/javascript" async 
+                        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML">
+                    </script>
+                            
+                    <style>
+                        .tooltip-custom {{
+                            position: relative;
+                            display: inline-block;
+                            cursor: pointer;
+                        }}
+
+                        .tooltip-custom::after {{
+                            content: attr(data-tooltip);
+                            position: absolute;
+                            background-color: black;
+                            color: white;
+                            padding: 5px 10px;
+                            border-radius: 5px;
+                            top: 120%;
+                            left: 50%;
+                            transform: translateX(-50%);
+                            white-space: nowrap;
+                            font-size: 14px;
+                            opacity: 0;
+                            visibility: hidden;
+                            transition: opacity 0.3s ease-in-out;
+                        }}
+
+                        .tooltip-custom:hover::after {{
+                            opacity: 1;
+                            visibility: visible;
+                        }}
+            </style>
+
+                    <div style="text-align: center; font-size: 17px; font-weight: normal; color: #1F4A89; line-height: 1;">
+                        <span>\\(H(\\)
+                        <span id="math_tooltip" class="tooltip-custom" data-tooltip="Tooltip text">\\({variable}\\)</span>
+                        <span>\\()=\\)
+                    </div>
+
+                    <script>
+                        document.getElementById("math_tooltip").addEventListener("mouseenter", function() {{
+                            Shiny.setInputValue("btn_tooltip", "Hovered", {{priority: "event"}});
+                        }});
+                        document.getElementById("math_tooltip").addEventListener("mouseleave", function() {{
+                            Shiny.setInputValue("btn_tooltip", "Not Hovered", {{priority: "event"}});
+                        }});
+                        MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
+                    </script>
+                """)
+            
+            # Add a new orange datapoint button
             @reactive.effect
-            @reactive.event(input.calculate_button)
-            def testing():
-                side1 = "left" if vertical_split.get() else "below"
-                side2 = "right" if vertical_split.get() else "above"
-                side1_orange = 0
-                side2_orange = 0
-                side1_lemon = 0
-                side2_lemon = 0
-                for (x, y) in zip(o_points.get()['x'], o_points.get()['y']):
-                    if (vertical_split.get() and x < split_loc.get()) or (not vertical_split.get() and y < split_loc.get()):
-                        side1_orange += 1
-                    else:
-                        side2_orange += 1
-                for (x, y) in zip(l_points.get()['x'], l_points.get()['y']):
-                    if (vertical_split.get() and x < split_loc.get()) or (not vertical_split.get() and y < split_loc.get()):
-                        side1_lemon += 1
-                    else:
-                        side2_lemon += 1
-                oranges = side1_orange + side2_orange
-                lemons = side1_lemon + side2_lemon
-                total = oranges + lemons
-                side1s = side1_orange + side1_lemon
-                side2s = side2_orange + side2_lemon
-                h_y = calculate_entropy(lemons, oranges, total)
-                h_yside1 = calculate_entropy(side1_lemon, side1_orange, side1s)
-                h_yside2 = calculate_entropy(side2_lemon, side2_orange, side2s)
-                h_yx = calculate_condent(side1s, side2s, total, h_yside1, h_yside2)
-                infogain = calculate_infogain(h_y, h_yx)
-                info = {'side1': side1, 'side2': side2, 'side1_orange': side1_orange,
-                        'side2_orange': side2_orange, 'side1_lemon': side1_lemon, 'side2_lemon': side2_lemon,
-                        'oranges': oranges, 'lemons': lemons, 'total': total,
-                        'side1s': side1s, 'side2s': side2s, 'h_y': h_y,
-                        'h_yside1': h_yside1, 'h_yside2': h_yside2, 'h_yx': h_yx,
-                        'infogain': infogain}
-                print("hi")
-                return info
+            @reactive.event(input.btn_tooltip)
+            def highlight_orange():
+                tooltip_state = input.btn_tooltip()
+                # Get the current outline width
+                copy = o_outline_width.get()[:]
+                
+                if tooltip_state == "Hovered":
+                    # Logic for when the tooltip is hovered
+                    for i in range(len(copy)):
+                        if o_points.get()['x'][i] < split_loc.get():
+                            copy[i] = 2  # Change outline width to 2 when hovered
+                elif tooltip_state == "Not Hovered":
+                    # Logic for when the tooltip is not hovered
+                    for i in range(len(copy)):
+                        copy[i] = 0  # Reset outline width to 0 when not hovered
 
-
-            @reactive.calc
-            def lemon_test():
-                return vertical_split.get()
+                # Set the updated outline width
+                o_outline_width.set(copy)
+                
 
             with ui.tags.div(style="text-align: center;"):
                 # Tooltip only for H(Y)
