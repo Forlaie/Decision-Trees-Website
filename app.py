@@ -206,7 +206,11 @@ with ui.nav_panel("Information Gain"):
             @render_plotly
             def feature_plot():
                 fig = go.Figure()
-                print("test")
+                fig.update_layout(
+                    height=400,
+                    width=700,
+                    margin=dict(t=10, b=10, l=10, r=10)  # Adjust the margins if needed
+                )
                 # Add orange points (circles)
                 fig.add_trace(go.Scatter(
                     x=o_points.get()['x'],
