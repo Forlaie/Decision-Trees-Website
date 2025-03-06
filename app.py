@@ -26,44 +26,171 @@ def create_mathjax_content(info):
     # Base MathJax content
     lines = {
         1: f"""
-            \\[H(Y) = -\\frac{info['lemons']}{info['total']}log_{2}\\frac{info['lemons']}{info['total']} -\\frac{info['oranges']}{info['total']}log_{2}\\frac{info['oranges']}{info['total']}\\approx{info['h_y']}\\]
+            <div style="text-align: center; font-size: 20px; font-weight: normal; color: #1F4A89; line-height: 1;">
+                <span>\\(H(\\)</span>
+                {tooltip_test("Y", f"(Oranges, Lemons)", f"Y")}
+                <span>\\()=-\\)</span>
+                {tooltip_test("Total lemons", "Total lemons / Total datapoints", f"\\frac{info['lemons']}{info['total']} \\log_{2} \\frac{info['lemons']}{info['total']}")}
+                <span>\\(-\\)</span>
+                {tooltip_test("Total oranges", "Total oranges / Total datapoints", f"\\frac{info['oranges']}{info['total']} \\log_{2} \\frac{info['oranges']}{info['total']}")}
+                <span>\\( \\approx{info['h_y']} \\)
+            </div>
+
+            <script>
+                document.getElementById("Y").addEventListener("mouseenter", function() {{
+                    Shiny.setInputValue("btn_Y", "Hovered", {{priority: "event"}});
+                }});
+                document.getElementById("Y").addEventListener("mouseleave", function() {{
+                    Shiny.setInputValue("btn_Y", "Not Hovered", {{priority: "event"}});
+                }});
+                
+                document.getElementById("Total lemons").addEventListener("mouseenter", function() {{
+                    Shiny.setInputValue("btn_all_lemons", "Hovered", {{priority: "event"}});
+                }});
+                document.getElementById("Total lemons").addEventListener("mouseleave", function() {{
+                    Shiny.setInputValue("btn_all_lemons", "Not Hovered", {{priority: "event"}});
+                }});
+
+                document.getElementById("Total oranges").addEventListener("mouseenter", function() {{
+                    Shiny.setInputValue("btn_all_oranges", "Hovered", {{priority: "event"}});
+                }});
+                document.getElementById("Total oranges").addEventListener("mouseleave", function() {{
+                    Shiny.setInputValue("btn_all_oranges", "Not Hovered", {{priority: "event"}});
+                }});
+
+                updateMathJax();
+            </script>
         """,
         2: f"""
-            \\[H(Y|{info['side1']}) = -\\frac{info['side1_lemon']}{info['side1s']}log_{2}\\frac{info['side1_lemon']}{info['side1s']} -\\frac{info['side1_orange']}{info['side1s']}log_{2}\\frac{info['side1_orange']}{info['side1s']}\\approx{info['h_yside1']}\\]
+            <div style="text-align: center; font-size: 20px; font-weight: normal; color: #1F4A89; line-height: 1;">
+                <span>\\(H(\\)</span>
+                {tooltip_test("Y", f"Oranges, Lemons", f"Y")}
+                <span>\\(|\\)</span>
+                {tooltip_test("X side 1", f"Only looking at the {info['side1']} side of the split", f"X = {info['side1']}")}
+                <span>\\()=-\\)</span>
+                {tooltip_test("Lemons side 1", f"Total lemons {info['side1']} / Total datapoints {info['side1']}", f"\\frac{info['side1_lemon']}{info['side1s']} \\log_{2} \\frac{info['side1_lemon']}{info['side1s']}")}
+                <span>\\(-\\)</span>
+                {tooltip_test("Oranges side 1", f"Total oranges {info['side1']} / Total datapoints {info['side1']}", f"\\frac{info['side1_orange']}{info['side1s']} \\log_{2} \\frac{info['side1_orange']}{info['side1s']}")}
+                <span>\\( \\approx{info['h_yside1']} \\)
+            </div>
+
+            <script>
+                document.getElementById("X side 1").addEventListener("mouseenter", function() {{
+                    Shiny.setInputValue("btn_X_side1", "Hovered", {{priority: "event"}});
+                }});
+                document.getElementById("X side 1").addEventListener("mouseleave", function() {{
+                    Shiny.setInputValue("btn_X_side1", "Not Hovered", {{priority: "event"}});
+                }});
+
+                document.getElementById("Lemons side 1").addEventListener("mouseenter", function() {{
+                    Shiny.setInputValue("btn_lemons_side1", "Hovered", {{priority: "event"}});
+                }});
+                document.getElementById("Lemons side 1").addEventListener("mouseleave", function() {{
+                    Shiny.setInputValue("btn_lemons_side1", "Not Hovered", {{priority: "event"}});
+                }});
+
+                document.getElementById("Oranges side 1").addEventListener("mouseenter", function() {{
+                    Shiny.setInputValue("btn_oranges_side1", "Hovered", {{priority: "event"}});
+                }});
+                document.getElementById("Oranges side 1").addEventListener("mouseleave", function() {{
+                    Shiny.setInputValue("btn_oranges_side1", "Not Hovered", {{priority: "event"}});
+                }});
+
+                updateMathJax();
+            </script>
         """,
         3: f"""
-            \\[H(Y|{info['side2']}) = -\\frac{info['side2_lemon']}{info['side2s']}log_{2}\\frac{info['side2_lemon']}{info['side2s']} -\\frac{info['side2_orange']}{info['side2s']}log_{2}\\frac{info['side2_orange']}{info['side2s']}\\approx{info['h_yside2']}\\]
+            <div style="text-align: center; font-size: 20px; font-weight: normal; color: #1F4A89; line-height: 1;">
+                <span>\\(H(\\)</span>
+                {tooltip_test("Y", f"Oranges, Lemons", f"Y")}
+                <span>\\(|\\)</span>
+                {tooltip_test("X side 2", f"Only looking at the {info['side2']} side of the split", f"X = {info['side2']}")}
+                <span>\\()=-\\)</span>
+                {tooltip_test("Lemons side 2", f"Total lemons {info['side2']} / Total datapoints {info['side2']}", f"\\frac{info['side2_lemon']}{info['side2s']} \\log_{2} \\frac{info['side2_lemon']}{info['side2s']}")}
+                <span>\\(-\\)</span>
+                {tooltip_test("Oranges side 2", f"Total oranges {info['side2']} / Total datapoints {info['side2']}", f"\\frac{info['side2_orange']}{info['side2s']} \\log_{2} \\frac{info['side2_orange']}{info['side2s']}")}
+                <span>\\( \\approx{info['h_yside2']} \\)
+            </div>
+
+            <script>
+                document.getElementById("X side 2").addEventListener("mouseenter", function() {{
+                    Shiny.setInputValue("btn_X_side2", "Hovered", {{priority: "event"}});
+                }});
+                document.getElementById("X side 2").addEventListener("mouseleave", function() {{
+                    Shiny.setInputValue("btn_X_side2", "Not Hovered", {{priority: "event"}});
+                }});
+
+                document.getElementById("Lemons side 2").addEventListener("mouseenter", function() {{
+                    Shiny.setInputValue("btn_lemons_side2", "Hovered", {{priority: "event"}});
+                }});
+                document.getElementById("Lemons side 2").addEventListener("mouseleave", function() {{
+                    Shiny.setInputValue("btn_lemons_side2", "Not Hovered", {{priority: "event"}});
+                }});
+
+                document.getElementById("Oranges side 2").addEventListener("mouseenter", function() {{
+                    Shiny.setInputValue("btn_oranges_side2", "Hovered", {{priority: "event"}});
+                }});
+                document.getElementById("Oranges side 2").addEventListener("mouseleave", function() {{
+                    Shiny.setInputValue("btn_oranges_side2", "Not Hovered", {{priority: "event"}});
+                }});
+
+                updateMathJax();
+            </script>
         """,
         4: f"""
-            \\[H(Y|X) = \\frac{info['side1s']}{info['total']}\\cdot{info['h_yside1']} + \\frac{info['side2s']}{info['total']}\\cdot{info['h_yside2']}\\approx{info['h_yx']}\\]
+            <div style="text-align: center; font-size: 20px; font-weight: normal; color: #1F4A89; line-height: 1;">
+                <span>\\(H(\\)</span>
+                {tooltip_test("Y", f"Oranges, Lemons", f"Y")}
+                <span>\\(|\\)</span>
+                {tooltip_test("X", f"{info['side1']}, {info['side2']}", f"X")}
+                <span>\\()=\\)</span>
+                {tooltip_test("Side 1", f"Total {info['side1']} datapoints / Total datapoints", f"\\frac{info['side1s']}{info['total']}")}
+                <span>\\(\\cdot\\)</span>
+                {tooltip_test("Hy Side 1", f"H(Y|X={info['side1']})", f"{info['h_yside1']}")}
+                <span>\\(+\\)</span>
+                {tooltip_test("Side 2", f"Total {info['side2']} datapoints / Total datapoints", f"\\frac{info['side2s']}{info['total']}")}
+                <span>\\(\\cdot\\)</span>
+                {tooltip_test("Hy Side 2", f"H(Y|X={info['side2']})", f"{info['h_yside2']}")}
+                <span>\\( \\approx{info['h_yx']} \\)
+            </div>
+
+            <script>
+                document.getElementById("Side 1").addEventListener("mouseenter", function() {{
+                    Shiny.setInputValue("btn_side1", "Hovered", {{priority: "event"}});
+                }});
+                document.getElementById("Side 1").addEventListener("mouseleave", function() {{
+                    Shiny.setInputValue("btn_side1", "Not Hovered", {{priority: "event"}});
+                }});
+
+                document.getElementById("Side 2").addEventListener("mouseenter", function() {{
+                    Shiny.setInputValue("btn_side2", "Hovered", {{priority: "event"}});
+                }});
+                document.getElementById("Side 2").addEventListener("mouseleave", function() {{
+                    Shiny.setInputValue("btn_side2", "Not Hovered", {{priority: "event"}});
+                }});
+
+                updateMathJax();
+            </script>
         """,
         5: f"""
-            \\[IG(Y|X) = {info['h_y']} - {info['h_yx']} \\approx {info['infogain']}\\]
+            <div style="text-align: center; font-size: 20px; font-weight: normal; color: #1F4A89; line-height: 1;">
+                {tooltip_test("infogain", f"Information gain from this split", f"IG(Y|X)")}
+                <span>\\(=\\)</span>
+                {tooltip_test("Hy", f"H(Y)", f"{info['h_y']}")}
+                <span>\\(-\\)</span>
+                {tooltip_test("Hyx", f"H(Y|X)", f"{info['h_yx']}")}
+                <span>\\(\\approx {info['infogain']}\\)</span>
+            </div>
         """
     }
     
     # Start the HTML content
-    mathjax_html = """
-    <script type="text/javascript" async 
-        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML">
-    </script>
-
-    <div style="text-align: top; font-size: 17px; font-weight: normal; color: #1F4A89; line-height: 1;">
-    """
+    mathjax_html = """"""
     
     # Add the selected line based on the `step`
-    for i in range(1, 5):
+    for i in range(1, 6):
         if i <= step.get():
             mathjax_html += lines[i]
-
-    # Close the div and script tags
-    mathjax_html += """
-    </div>
-
-    <script type="text/javascript">
-        MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
-    </script>
-    """
     
     return mathjax_html
 
@@ -79,7 +206,8 @@ variables = reactive.value(False)
 definition = reactive.value(False)
 o_outline_width = reactive.value([0, 0, 0, 0, 0])
 l_outline_width = reactive.value([0, 0])
-step = reactive.value(0)
+step = reactive.value(5)
+rect_coords = reactive.value([0, 0, 0, 0])
 
 # Make main screen, with title and page navigation
 ui.page_opts(
@@ -87,75 +215,6 @@ ui.page_opts(
     page_fn=partial(page_navbar, id="page"),
     fillable=True,
 )
-
-# def make_normal_text(text):
-#     return ui.tags.span(ui.HTML(f"""
-#             <span style="font-size: 17px; font-weight: normal; color: #1F4A89; line-height: 1; vertical-align: middle;">
-#                 \\({text}\\)
-#             </span>
-#         """))
-
-# with ui.nav_panel("Test"):
-#     @render.ui
-#     def mathjax_output():
-#         variable = str(vertical_split.get())  # Get variable input
-#         return ui.HTML(f"""
-#             <script type="text/javascript" async 
-#                 src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML">
-#             </script>
-                       
-#             <style>
-#                 .tooltip-custom {{
-#                     position: relative;
-#                     display: inline-block;
-#                     cursor: pointer;
-#                 }}
-
-#                 .tooltip-custom::after {{
-#                     content: attr(data-tooltip);
-#                     position: absolute;
-#                     background-color: black;
-#                     color: white;
-#                     padding: 5px 10px;
-#                     border-radius: 5px;
-#                     top: 120%;
-#                     left: 50%;
-#                     transform: translateX(-50%);
-#                     white-space: nowrap;
-#                     font-size: 14px;
-#                     opacity: 0;
-#                     visibility: hidden;
-#                     transition: opacity 0.3s ease-in-out;
-#                 }}
-
-#                 .tooltip-custom:hover::after {{
-#                     opacity: 1;
-#                     visibility: visible;
-#                 }}
-#     </style>
-
-#             <div style="text-align: center; font-size: 17px; font-weight: normal; color: #1F4A89; line-height: 1;">
-#                 <span>\\(H(\\)
-#                 <span id="math_tooltip" class="tooltip-custom" data-tooltip="Tooltip text">\\({variable}\\)</span>
-#                 <span>\\()=\\)
-#             </div>
-
-#             <script>
-#                 document.getElementById("math_tooltip").addEventListener("mouseenter", function() {{
-#                     Shiny.setInputValue("btn_tooltip", "Hovered", {{priority: "event"}});
-#                 }});
-#                 document.getElementById("math_tooltip").addEventListener("mouseleave", function() {{
-#                     Shiny.setInputValue("btn_tooltip", "Not Hovered", {{priority: "event"}});
-#                 }});
-#                 MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
-#             </script>
-#         """)
-
-# #H(Y) = -\\frac{lemons}{total}log_{2}\\frac{lemons}{total} -\\frac{oranges}{total}log_{2}\\frac{oranges}{total}\\approx{h_y}\\
-
-#     @render.text
-#     def btn_tooltip_state():
-#         return f"Tooltip state: {input.btn_tooltip()}"
 
 # Information gain page
 with ui.nav_panel("Information Gain"):
@@ -272,6 +331,16 @@ with ui.nav_panel("Information Gain"):
                 #     margin=dict(t=10, b=10, l=10, r=10)  # Adjust the margins if needed
                 # )
                 # Add orange points (circles)
+                fig.add_shape(
+                    type="rect",
+                    x0=rect_coords.get()[0],  # start of the rectangle (x < 3)
+                    x1=rect_coords.get()[1],  # end of the rectangle
+                    y0=rect_coords.get()[2],  # lower bound of the rectangle
+                    y1=rect_coords.get()[3],  # upper bound of the rectangle
+                    line=dict(color="RoyalBlue", width=2),
+                    fillcolor="LightSkyBlue",  # set fill color to blue
+                    opacity=0.3
+                )
                 fig.add_trace(go.Scatter(
                     x=o_points.get()['x'],
                     y=o_points.get()['y'],
@@ -557,148 +626,359 @@ with ui.nav_panel("Information Gain"):
             def tooltip_test(id, tip, content):
                 return f"""<span id="{id}" class="tooltip-custom" data-tooltip="{tip}">\\( {content} \\)</span>"""
 
+            # def frac_test(id, tip, content):
+            #     return f"""\\text(<span id="{id}" class="tooltip-custom" data-tooltip="{tip}">\\( { content } \\))</span>"""
+            #     return 1
+
             @render.ui
             def testing_mathjax():
                 info = calculate()
-                return ui.HTML(f"""
-                    <div style="text-align: center; font-size: 20px; font-weight: normal; color: #1F4A89; line-height: 1;">
-                        <span>\\(H(\\)</span>
-                        {tooltip_test("Y", f"(Oranges, Lemons)", f"Y")}
-                        <span>\\()=\\)</span>
-                        {tooltip_test("Total lemons", "Total lemons / Total datapoints", f"\\frac{info['lemons']}{info['total']} \\log_{2} \\frac{info['lemons']}{info['total']}")}
-                        <span>\\(+\\)</span>
-                        {tooltip_test("Total oranges", "Total oranges / Total datapoints", f"\\frac{info['oranges']}{info['total']} \\log_{2} \\frac{info['oranges']}{info['total']}")}
-                    </div>
-
-                    <script>
-                        document.getElementById("Y").addEventListener("mouseenter", function() {{
-                            Shiny.setInputValue("btn_Y", "Hovered", {{priority: "event"}});
-                        }});
-                        document.getElementById("Y").addEventListener("mouseleave", function() {{
-                            Shiny.setInputValue("btn_Y", "Not Hovered", {{priority: "event"}});
-                        }});
-                        
-                        document.getElementById("Total lemons").addEventListener("mouseenter", function() {{
-                            Shiny.setInputValue("btn_all_lemons", "Hovered", {{priority: "event"}});
-                        }});
-                        document.getElementById("Total lemons").addEventListener("mouseleave", function() {{
-                            Shiny.setInputValue("btn_all_lemons", "Not Hovered", {{priority: "event"}});
-                        }});
-
-                        updateMathJax();
-                    </script>
-
-                    <div style="text-align: center; font-size: 20px; font-weight: normal; color: #1F4A89; line-height: 1;">
-                        <span>\\(H(\\)</span>
-                        {tooltip_test("big Y", f"Oranges, Lemons", f"Y = {info['side1']}")}
-                        <span>\\()=\\)</span>
-                        {tooltip_test("testing", "Total lemons / Total datapoints", f"\\frac{info['side1_lemon']}{info['total']} \\log_{2} \\frac{info['side1_lemon']}{info['total']}")}
-                    </div>
-
-                    <script>
-                        document.getElementById("big Y").addEventListener("mouseenter", function() {{
-                            Shiny.setInputValue("btn_bigY", "Hovered", {{priority: "event"}});
-                        }});
-                        document.getElementById("big Y").addEventListener("mouseleave", function() {{
-                            Shiny.setInputValue("btn_bigY", "Not Hovered", {{priority: "event"}});
-                        }});
-                        updateMathJax();
-                    </script>
-                """)
+                return ui.HTML(create_mathjax_content(info))
             
-            # Add a new orange datapoint button
             @reactive.effect
-            @reactive.event(input.btn_bigY)
-            def highlight_orange():
-                tooltip_state = input.btn_bigY()
+            @reactive.event(input.btn_side2)
+            def highlight_side1():
+                tooltip_state = input.btn_side2()
+                o_copy = o_outline_width.get()[:]
+                l_copy = l_outline_width.get()[:]
+                rect_copy = rect_coords.get()[:]
+
+                if tooltip_state == "Hovered":
+                    for i in range(len(o_copy)):
+                        if vertical_split.get() == True and o_points.get()['x'][i] > split_loc.get():
+                            o_copy[i] = 2
+                        if vertical_split.get() == False and o_points.get()['y'][i] > split_loc.get():
+                            o_copy[i] = 2
+                    for i in range(len(l_copy)):
+                        if vertical_split.get() == True and l_points.get()['x'][i] > split_loc.get():
+                            l_copy[i] = 2  # Change outline width to 2 when hovered
+                        if vertical_split.get() == False and l_points.get()['y'][i] > split_loc.get():
+                            l_copy[i] = 2
+                
+                    rect_copy[0] = 0
+                    rect_copy[1] = 10
+                    rect_copy[2] = 0
+                    rect_copy[3] = 10
+                    rect_coords.set(rect_copy)
+                elif tooltip_state == "Not Hovered":
+                    for i in range(len(o_copy)):
+                        o_copy[i] = 0
+                    for i in range(len(l_copy)):
+                        l_copy[i] = 0
+                    rect_copy[0] = 0
+                    rect_copy[1] = 0
+                    rect_copy[2] = 0
+                    rect_copy[3] = 0
+                    rect_coords.set(rect_copy)
+                o_outline_width.set(o_copy)
+                l_outline_width.set(l_copy)
+
+            @reactive.effect
+            @reactive.event(input.btn_side1)
+            def highlight_side1():
+                tooltip_state = input.btn_side1()
+                o_copy = o_outline_width.get()[:]
+                l_copy = l_outline_width.get()[:]
+                rect_copy = rect_coords.get()[:]
+
+                if tooltip_state == "Hovered":
+                    for i in range(len(o_copy)):
+                        if vertical_split.get() == True and o_points.get()['x'][i] < split_loc.get():
+                            o_copy[i] = 2
+                        if vertical_split.get() == False and o_points.get()['y'][i] < split_loc.get():
+                            o_copy[i] = 2
+                    for i in range(len(l_copy)):
+                        if vertical_split.get() == True and l_points.get()['x'][i] < split_loc.get():
+                            l_copy[i] = 2  # Change outline width to 2 when hovered
+                        if vertical_split.get() == False and l_points.get()['y'][i] < split_loc.get():
+                            l_copy[i] = 2
+                
+                    rect_copy[0] = 0
+                    rect_copy[1] = 10
+                    rect_copy[2] = 0
+                    rect_copy[3] = 10
+                    rect_coords.set(rect_copy)
+                elif tooltip_state == "Not Hovered":
+                    for i in range(len(o_copy)):
+                        o_copy[i] = 0
+                    for i in range(len(l_copy)):
+                        l_copy[i] = 0
+                    rect_copy[0] = 0
+                    rect_copy[1] = 0
+                    rect_copy[2] = 0
+                    rect_copy[3] = 0
+                    rect_coords.set(rect_copy)
+                o_outline_width.set(o_copy)
+                l_outline_width.set(l_copy)
+
+            @reactive.effect
+            @reactive.event(input.btn_oranges_side2)
+            def highlight_orange_side2():
+                tooltip_state = input.btn_oranges_side2()
+                o_copy = o_outline_width.get()[:]
+                rect_copy = rect_coords.get()[:]
+
+                if tooltip_state == "Hovered":
+                    for i in range(len(o_copy)):
+                        if vertical_split.get() == True and o_points.get()['x'][i] > split_loc.get():
+                            o_copy[i] = 2
+                        if vertical_split.get() == False and o_points.get()['y'][i] > split_loc.get():
+                            o_copy[i] = 2
+                    if vertical_split.get() == True:
+                        rect_copy[0] = 10
+                        rect_copy[1] = split_loc.get()
+                        rect_copy[2] = 10
+                        rect_copy[3] = 0
+                        rect_coords.set(rect_copy)
+                    else:
+                        rect_copy[0] = 0
+                        rect_copy[1] = 10
+                        rect_copy[2] = split_loc.get()
+                        rect_copy[3] = 10
+                        rect_coords.set(rect_copy)
+                elif tooltip_state == "Not Hovered":
+                    for i in range(len(o_copy)):
+                        o_copy[i] = 0
+                    rect_copy[0] = 0
+                    rect_copy[1] = 0
+                    rect_copy[2] = 0
+                    rect_copy[3] = 0
+                    rect_coords.set(rect_copy)
+                o_outline_width.set(o_copy)
+
+            @reactive.effect
+            @reactive.event(input.btn_lemons_side2)
+            def highlight_lemons_side2():
+                tooltip_state = input.btn_lemons_side2()
                 # Get the current outline width
-                copy = o_outline_width.get()[:]
+                l_copy = l_outline_width.get()[:]
+                rect_copy = rect_coords.get()[:]
                 
                 if tooltip_state == "Hovered":
                     # Logic for when the tooltip is hovered
-                    for i in range(len(copy)):
-                        if vertical_split.get() == True and o_points.get()['x'][i] < split_loc.get():
-                            copy[i] = 2  # Change outline width to 2 when hovered
-                        if vertical_split.get() == False and o_points.get()['y'][i] < split_loc.get():
-                            copy[i] = 2
+                    for i in range(len(l_copy)):
+                        if vertical_split.get() == True and l_points.get()['x'][i] > split_loc.get():
+                            l_copy[i] = 2  # Change outline width to 2 when hovered
+                        if vertical_split.get() == False and l_points.get()['y'][i] > split_loc.get():
+                            l_copy[i] = 2
+                    if vertical_split.get() == True:
+                        rect_copy[0] = 10
+                        rect_copy[1] = split_loc.get()
+                        rect_copy[2] = 10
+                        rect_copy[3] = 0
+                        rect_coords.set(rect_copy)
+                    else:
+                        rect_copy[0] = 0
+                        rect_copy[1] = 10
+                        rect_copy[2] = split_loc.get()
+                        rect_copy[3] = 10
+                        rect_coords.set(rect_copy)
                 elif tooltip_state == "Not Hovered":
                     # Logic for when the tooltip is not hovered
-                    for i in range(len(copy)):
-                        copy[i] = 0  # Reset outline width to 0 when not hovered
+                    for i in range(len(l_copy)):
+                        l_copy[i] = 0
+                    rect_copy[0] = 0
+                    rect_copy[1] = 0
+                    rect_copy[2] = 0
+                    rect_copy[3] = 0
+                    rect_coords.set(rect_copy)
 
                 # Set the updated outline width
-                o_outline_width.set(copy)
+                l_outline_width.set(l_copy)
+            
+            @reactive.effect
+            @reactive.event(input.btn_X_side2)
+            def highlight_side2():
+                tooltip_state = input.btn_X_side2()
+                rect_copy = rect_coords.get()[:]
+                
+                if tooltip_state == "Hovered":
+                    if vertical_split.get() == True:
+                        rect_copy[0] = 10
+                        rect_copy[1] = split_loc.get()
+                        rect_copy[2] = 10
+                        rect_copy[3] = 0
+                        rect_coords.set(rect_copy)
+                    else:
+                        rect_copy[0] = 0
+                        rect_copy[1] = 10
+                        rect_copy[2] = split_loc.get()
+                        rect_copy[3] = 10
+                        rect_coords.set(rect_copy)
+                elif tooltip_state == "Not Hovered":
+                    rect_copy[0] = 0
+                    rect_copy[1] = 0
+                    rect_copy[2] = 0
+                    rect_copy[3] = 0
+                    rect_coords.set(rect_copy)
+
+            @reactive.effect
+            @reactive.event(input.btn_oranges_side1)
+            def highlight_orange_side1():
+                tooltip_state = input.btn_oranges_side1()
+                o_copy = o_outline_width.get()[:]
+                rect_copy = rect_coords.get()[:]
+
+                if tooltip_state == "Hovered":
+                    for i in range(len(o_copy)):
+                        if vertical_split.get() == True and o_points.get()['x'][i] < split_loc.get():
+                            o_copy[i] = 2
+                        if vertical_split.get() == False and o_points.get()['y'][i] < split_loc.get():
+                            o_copy[i] = 2
+                    if vertical_split.get() == True:
+                        rect_copy[0] = 0
+                        rect_copy[1] = split_loc.get()
+                        rect_copy[2] = 10
+                        rect_copy[3] = 0
+                        rect_coords.set(rect_copy)
+                    else:
+                        rect_copy[0] = 0
+                        rect_copy[1] = 10
+                        rect_copy[2] = split_loc.get()
+                        rect_copy[3] = 0
+                        rect_coords.set(rect_copy)
+                elif tooltip_state == "Not Hovered":
+                    for i in range(len(o_copy)):
+                        o_copy[i] = 0
+                    rect_copy[0] = 0
+                    rect_copy[1] = 0
+                    rect_copy[2] = 0
+                    rect_copy[3] = 0
+                    rect_coords.set(rect_copy)
+                o_outline_width.set(o_copy)
+
+            @reactive.effect
+            @reactive.event(input.btn_lemons_side1)
+            def highlight_lemons_side1():
+                tooltip_state = input.btn_lemons_side1()
+                # Get the current outline width
+                l_copy = l_outline_width.get()[:]
+                rect_copy = rect_coords.get()[:]
+                
+                if tooltip_state == "Hovered":
+                    # Logic for when the tooltip is hovered
+                    for i in range(len(l_copy)):
+                        if vertical_split.get() == True and l_points.get()['x'][i] < split_loc.get():
+                            l_copy[i] = 2  # Change outline width to 2 when hovered
+                        if vertical_split.get() == False and l_points.get()['y'][i] < split_loc.get():
+                            l_copy[i] = 2
+                    if vertical_split.get() == True:
+                        rect_copy[0] = 0
+                        rect_copy[1] = split_loc.get()
+                        rect_copy[2] = 10
+                        rect_copy[3] = 0
+                        rect_coords.set(rect_copy)
+                    else:
+                        rect_copy[0] = 0
+                        rect_copy[1] = 10
+                        rect_copy[2] = split_loc.get()
+                        rect_copy[3] = 0
+                        rect_coords.set(rect_copy)
+                elif tooltip_state == "Not Hovered":
+                    # Logic for when the tooltip is not hovered
+                    for i in range(len(l_copy)):
+                        l_copy[i] = 0
+                    rect_copy[0] = 0
+                    rect_copy[1] = 0
+                    rect_copy[2] = 0
+                    rect_copy[3] = 0
+                    rect_coords.set(rect_copy)
+
+                # Set the updated outline width
+                l_outline_width.set(l_copy)
+            
+            @reactive.effect
+            @reactive.event(input.btn_X_side1)
+            def highlight_side1():
+                tooltip_state = input.btn_X_side1()
+                rect_copy = rect_coords.get()[:]
+                
+                if tooltip_state == "Hovered":
+                    if vertical_split.get() == True:
+                        rect_copy[0] = 0
+                        rect_copy[1] = split_loc.get()
+                        rect_copy[2] = 10
+                        rect_copy[3] = 0
+                        rect_coords.set(rect_copy)
+                    else:
+                        rect_copy[0] = 0
+                        rect_copy[1] = 10
+                        rect_copy[2] = split_loc.get()
+                        rect_copy[3] = 0
+                        rect_coords.set(rect_copy)
+                elif tooltip_state == "Not Hovered":
+                    rect_copy[0] = 0
+                    rect_copy[1] = 0
+                    rect_copy[2] = 0
+                    rect_copy[3] = 0
+                    rect_coords.set(rect_copy)
 
             @reactive.effect
             @reactive.event(input.btn_Y)
             def highlight_all_dp():
                 tooltip_state = input.btn_Y()
-                # Get the current outline width
-                o_copy = o_outline_width.get()[:]
-                l_copy = l_outline_width.get()[:]
+                rect_copy = rect_coords.get()[:]
                 
                 if tooltip_state == "Hovered":
-                    # Logic for when the tooltip is hovered
-                    for i in range(len(o_copy)):
-                        o_copy[i] = 2  # Change outline width to 2 when hovered
-                    for i in range(len(l_copy)):
-                        l_copy[i] = 2
+                    rect_copy[0] = 0
+                    rect_copy[1] = 10
+                    rect_copy[2] = 10
+                    rect_copy[3] = 0
+                    rect_coords.set(rect_copy)
                 elif tooltip_state == "Not Hovered":
-                    # Logic for when the tooltip is not hovered
-                    for i in range(len(o_copy)):
-                        o_copy[i] = 0  # Reset outline width to 0 when not hovered
-                    for i in range(len(l_copy)):
-                        l_copy[i] = 0
-
-                # Set the updated outline width
-                o_outline_width.set(o_copy)
-                l_outline_width.set(l_copy)
+                    rect_copy[0] = 0
+                    rect_copy[1] = 0
+                    rect_copy[2] = 0
+                    rect_copy[3] = 0
+                    rect_coords.set(rect_copy)
 
             @reactive.effect
             @reactive.event(input.btn_all_lemons)
             def highlight_all_lemons():
                 tooltip_state = input.btn_all_lemons()
                 l_copy = l_outline_width.get()[:]   
+                rect_copy = rect_coords.get()[:]
                 if tooltip_state == "Hovered":
                     for i in range(len(l_copy)):
                             l_copy[i] = 2
+                    rect_copy[0] = 0
+                    rect_copy[1] = 10
+                    rect_copy[2] = 10
+                    rect_copy[3] = 0
+                    rect_coords.set(rect_copy)
                 elif tooltip_state == "Not Hovered":
                     for i in range(len(l_copy)):
                         l_copy[i] = 0
+                    rect_copy[0] = 0
+                    rect_copy[1] = 0
+                    rect_copy[2] = 0
+                    rect_copy[3] = 0
+                    rect_coords.set(rect_copy)
                 l_outline_width.set(l_copy)
 
-            # with ui.tags.div(style="text-align: center;"):
-            #     # Tooltip only for H(Y)
-            #     with ui.tooltip(id="Y", placement="right"):  
-            #         ui.tags.span(ui.HTML(f"""
-            #                             <script type="text/javascript" async 
-            #                                 src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML">
-            #                             </script>
-            #                             <span style="text-align: center; font-size: 17px; font-weight: normal; color: #1F4A89; line-height: 1;">
-            #                                 \\(H(Y)\\)
-            #                             </span>
-                                            
-                                        
-            #                         """))
-            #         ui.HTML(f"""
-            #                 <script type="text/javascript" async 
-            #                     src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML">
-            #                 </script>
-            #                 \\(Y \\in \\lbrace oranges, lemons \\rbrace \\)""")  # Tooltip content
-
-            #     # "test" placed outside the tooltip but still inline
-            #     make_normal_text("= -")
-            #     lemons = 1
-            #     total = 2
-            #     with ui.tooltip(id="lemon1", placement="right"):  
-            #         ui.tags.span(ui.HTML(f"""
-            #                                     <span style="font-size: 17px; font-weight: normal; color: #1F4A89; line-height: 1; vertical-align: middle;">
-            #                                         \\(\\frac{lemons}{total}log_{2}\\frac{lemons}{total}\\)
-            #                                     </span>
-            #                                 """))
-            #         "test" 
-
-                #H(Y) = -\\frac{lemons}{total}log_{2}\\frac{lemons}{total} -\\frac{oranges}{total}log_{2}\\frac{oranges}{total}\\approx{h_y}\\
+            @reactive.effect
+            @reactive.event(input.btn_all_oranges)
+            def highlight_all_oranges():
+                tooltip_state = input.btn_all_oranges()
+                o_copy = o_outline_width.get()[:]
+                rect_copy = rect_coords.get()[:]
+                if tooltip_state == "Hovered":
+                    for i in range(len(o_copy)):
+                        o_copy[i] = 2
+                    rect_copy[0] = 0
+                    rect_copy[1] = 10
+                    rect_copy[2] = 10
+                    rect_copy[3] = 0
+                    rect_coords.set(rect_copy)
+                elif tooltip_state == "Not Hovered":
+                    for i in range(len(o_copy)):
+                        o_copy[i] = 0
+                    rect_copy[0] = 0
+                    rect_copy[1] = 0
+                    rect_copy[2] = 0
+                    rect_copy[3] = 0
+                    rect_coords.set(rect_copy)
+                o_outline_width.set(o_copy)
 
             # Button to calculate information gain
             with ui.layout_columns():
@@ -708,6 +988,7 @@ with ui.nav_panel("Information Gain"):
                     ui.input_action_button("definition", "Toggle definition", style="color: #fff; background-color: #337ab7; border-color: #2e6da4;"),
                     style="display: flex; justify-content: space-between; gap: 10px; margin-top: auto;"
                 ),
+            
             # Toggle buttons for notation, variables, and definition
             @reactive.effect
             @reactive.event(input.notation)
@@ -731,7 +1012,6 @@ with ui.nav_panel("Information Gain"):
             
             ui.div(
                 ui.div(
-                    ui.input_action_button("calculate_button", "Calculate information gain", style="color: #fff; background-color: #337ab7; border-color: #2e6da4; width: 100%;"),
                     ui.input_action_button("prev_step", "Previous step", style="color: #fff; background-color: #337ab7; border-color: #2e6da4; width: 100%;"),
                     ui.input_action_button("next_step", "Next step", style="color: #fff; background-color: #337ab7; border-color: #2e6da4; width: 100%;"),
                     style="display: flex; justify-content: space-between; gap: 10px; margin-top: auto;"
