@@ -4,8 +4,8 @@ from functools import partial
 from shiny.ui import page_navbar
 import plotly.graph_objects as go
 from shinywidgets import render_plotly
-
 import math
+
 def calculate_entropy(n1, n2, t):
     p1 = n1/t
     p2 = n2/t
@@ -78,7 +78,7 @@ notation = reactive.value(False)
 variables = reactive.value(False)
 definition = reactive.value(False)
 o_outline_width = reactive.value([0, 0, 0, 0, 0])
-l_outline_width = reactive.value([0, 0, 0, 0, 0])
+l_outline_width = reactive.value([0, 0])
 step = reactive.value(0)
 
 # Make main screen, with title and page navigation
@@ -88,12 +88,12 @@ ui.page_opts(
     fillable=True,
 )
 
-def make_normal_text(text):
-    return ui.tags.span(ui.HTML(f"""
-            <span style="font-size: 17px; font-weight: normal; color: #1F4A89; line-height: 1; vertical-align: middle;">
-                \\({text}\\)
-            </span>
-        """))
+# def make_normal_text(text):
+#     return ui.tags.span(ui.HTML(f"""
+#             <span style="font-size: 17px; font-weight: normal; color: #1F4A89; line-height: 1; vertical-align: middle;">
+#                 \\({text}\\)
+#             </span>
+#         """))
 
 # with ui.nav_panel("Test"):
 #     @render.ui
@@ -157,9 +157,69 @@ def make_normal_text(text):
 #     def btn_tooltip_state():
 #         return f"Tooltip state: {input.btn_tooltip()}"
 
-
 # Information gain page
 with ui.nav_panel("Information Gain"):
+    ui.HTML("""
+        <script type="text/javascript" async 
+            src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML">
+        </script>
+
+        <style>
+            .tooltip-custom {
+                position: relative;
+                display: inline-block;
+                cursor: pointer;
+                transition: background-color 0.3s ease-in-out;
+            }
+
+            .tooltip-custom:hover {
+                background-color:rgb(111, 247, 240);  /* Light background color to highlight */
+                border-radius: 5px;  /* Optional: smooth rounded edges */
+            }
+
+            .tooltip-custom::after {
+                content: attr(data-tooltip);
+                position: absolute;
+                background-color: black;
+                color: white;
+                padding: 5px 10px;
+                border-radius: 5px;
+                top: 120%;
+                left: 50%;
+                transform: translateX(-50%);
+                white-space: nowrap;
+                font-size: 14px;
+                opacity: 0;
+                visibility: hidden;
+                transition: opacity 0.3s ease-in-out;
+            }
+
+            .tooltip-custom:hover::after {
+                opacity: 1;
+                visibility: visible;
+            }
+        </style>
+
+        <script>
+            // Function to update MathJax rendering when new Shiny data is available
+            function updateMathJax() {
+                if (window.MathJax) {
+                    MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
+                }
+            }
+            document.addEventListener("shiny:value", updateMathJax);
+        </script>
+
+
+        <script>
+            // Re-render MathJax on hover over the tooltip
+            document.querySelectorAll('data-tooltip').forEach(function(tooltip) {
+                tooltip.addEventListener('mouseenter', function() {
+                    MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
+                });
+            });
+        </script>
+    """)
 
     # Put cards in a column
     with ui.layout_columns():
@@ -206,11 +266,11 @@ with ui.nav_panel("Information Gain"):
             @render_plotly
             def feature_plot():
                 fig = go.Figure()
-                fig.update_layout(
-                    height=400,
-                    width=700,
-                    margin=dict(t=10, b=10, l=10, r=10)  # Adjust the margins if needed
-                )
+                # fig.update_layout(
+                #     height=400,
+                #     width=700,
+                #     margin=dict(t=10, b=10, l=10, r=10)  # Adjust the margins if needed
+                # )
                 # Add orange points (circles)
                 fig.add_trace(go.Scatter(
                     x=o_points.get()['x'],
@@ -233,9 +293,13 @@ with ui.nav_panel("Information Gain"):
                     mode='markers',
                     name='Lemon',
                     marker=dict(
-                        color='blue',
+                        color='lime',
                         size=12,
-                        symbol='triangle-up'
+                        symbol='triangle-up',
+                        line=dict(
+                            color=['black']*len(l_outline_width.get()),  # Outline for some points
+                            width=l_outline_width.get()  # 0 width removes outline for some points
+                        )
                     )
                 ))
                 fig.update_layout(
@@ -286,6 +350,7 @@ with ui.nav_panel("Information Gain"):
                     'y': curr_points['y'] + [y_coord.get()],
                 }
                 l_points.set(updated_points)
+                l_outline_width.get().append(0)
             
             # Buttons to remove datapoints
             with ui.layout_columns():
@@ -320,6 +385,7 @@ with ui.nav_panel("Information Gain"):
                         'y': curr_points['y'],
                     }
                     l_points.set(updated_points)
+                    l_outline_width.get().pop()
 
         # Calculations card
         with ui.card():
@@ -486,80 +552,75 @@ with ui.nav_panel("Information Gain"):
                         'side1s': side1s, 'side2s': side2s, 'h_y': h_y,
                         'h_yside1': h_yside1, 'h_yside2': h_yside2, 'h_yx': h_yx,
                         'infogain': infogain}
-                print(step.get())
-                return ui.p(
-                        ui.HTML(create_mathjax_content(info))
-                    )
+                return info
 
+            def tooltip_test(id, tip, content):
+                return f"""<span id="{id}" class="tooltip-custom" data-tooltip="{tip}">\\( {content} \\)</span>"""
 
             @render.ui
             def testing_mathjax():
-                variable = str(vertical_split.get())  # Get variable input
+                info = calculate()
                 return ui.HTML(f"""
-                    <script type="text/javascript" async 
-                        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML">
-                    </script>
-                            
-                    <style>
-                        .tooltip-custom {{
-                            position: relative;
-                            display: inline-block;
-                            cursor: pointer;
-                        }}
-
-                        .tooltip-custom::after {{
-                            content: attr(data-tooltip);
-                            position: absolute;
-                            background-color: black;
-                            color: white;
-                            padding: 5px 10px;
-                            border-radius: 5px;
-                            top: 120%;
-                            left: 50%;
-                            transform: translateX(-50%);
-                            white-space: nowrap;
-                            font-size: 14px;
-                            opacity: 0;
-                            visibility: hidden;
-                            transition: opacity 0.3s ease-in-out;
-                        }}
-
-                        .tooltip-custom:hover::after {{
-                            opacity: 1;
-                            visibility: visible;
-                        }}
-            </style>
-
-                    <div style="text-align: center; font-size: 17px; font-weight: normal; color: #1F4A89; line-height: 1;">
-                        <span>\\(H(\\)
-                        <span id="math_tooltip" class="tooltip-custom" data-tooltip="Tooltip text">\\({variable}\\)</span>
-                        <span>\\()=\\)
+                    <div style="text-align: center; font-size: 20px; font-weight: normal; color: #1F4A89; line-height: 1;">
+                        <span>\\(H(\\)</span>
+                        {tooltip_test("Y", f"(Oranges, Lemons)", f"Y")}
+                        <span>\\()=\\)</span>
+                        {tooltip_test("Total lemons", "Total lemons / Total datapoints", f"\\frac{info['lemons']}{info['total']} \\log_{2} \\frac{info['lemons']}{info['total']}")}
+                        <span>\\(+\\)</span>
+                        {tooltip_test("Total oranges", "Total oranges / Total datapoints", f"\\frac{info['oranges']}{info['total']} \\log_{2} \\frac{info['oranges']}{info['total']}")}
                     </div>
 
                     <script>
-                        document.getElementById("math_tooltip").addEventListener("mouseenter", function() {{
-                            Shiny.setInputValue("btn_tooltip", "Hovered", {{priority: "event"}});
+                        document.getElementById("Y").addEventListener("mouseenter", function() {{
+                            Shiny.setInputValue("btn_Y", "Hovered", {{priority: "event"}});
                         }});
-                        document.getElementById("math_tooltip").addEventListener("mouseleave", function() {{
-                            Shiny.setInputValue("btn_tooltip", "Not Hovered", {{priority: "event"}});
+                        document.getElementById("Y").addEventListener("mouseleave", function() {{
+                            Shiny.setInputValue("btn_Y", "Not Hovered", {{priority: "event"}});
                         }});
-                        MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
+                        
+                        document.getElementById("Total lemons").addEventListener("mouseenter", function() {{
+                            Shiny.setInputValue("btn_all_lemons", "Hovered", {{priority: "event"}});
+                        }});
+                        document.getElementById("Total lemons").addEventListener("mouseleave", function() {{
+                            Shiny.setInputValue("btn_all_lemons", "Not Hovered", {{priority: "event"}});
+                        }});
+
+                        updateMathJax();
+                    </script>
+
+                    <div style="text-align: center; font-size: 20px; font-weight: normal; color: #1F4A89; line-height: 1;">
+                        <span>\\(H(\\)</span>
+                        {tooltip_test("big Y", f"Oranges, Lemons", f"Y = {info['side1']}")}
+                        <span>\\()=\\)</span>
+                        {tooltip_test("testing", "Total lemons / Total datapoints", f"\\frac{info['side1_lemon']}{info['total']} \\log_{2} \\frac{info['side1_lemon']}{info['total']}")}
+                    </div>
+
+                    <script>
+                        document.getElementById("big Y").addEventListener("mouseenter", function() {{
+                            Shiny.setInputValue("btn_bigY", "Hovered", {{priority: "event"}});
+                        }});
+                        document.getElementById("big Y").addEventListener("mouseleave", function() {{
+                            Shiny.setInputValue("btn_bigY", "Not Hovered", {{priority: "event"}});
+                        }});
+                        updateMathJax();
                     </script>
                 """)
             
             # Add a new orange datapoint button
             @reactive.effect
-            @reactive.event(input.btn_tooltip)
+            @reactive.event(input.btn_bigY)
             def highlight_orange():
-                tooltip_state = input.btn_tooltip()
+                tooltip_state = input.btn_bigY()
                 # Get the current outline width
                 copy = o_outline_width.get()[:]
                 
                 if tooltip_state == "Hovered":
                     # Logic for when the tooltip is hovered
                     for i in range(len(copy)):
-                        if o_points.get()['x'][i] < split_loc.get():
+                        if vertical_split.get() == True and o_points.get()['x'][i] < split_loc.get():
                             copy[i] = 2  # Change outline width to 2 when hovered
+                        if vertical_split.get() == False and o_points.get()['y'][i] < split_loc.get():
+                            copy[i] = 2
                 elif tooltip_state == "Not Hovered":
                     # Logic for when the tooltip is not hovered
                     for i in range(len(copy)):
@@ -567,38 +628,75 @@ with ui.nav_panel("Information Gain"):
 
                 # Set the updated outline width
                 o_outline_width.set(copy)
-                
 
-            with ui.tags.div(style="text-align: center;"):
-                # Tooltip only for H(Y)
-                with ui.tooltip(id="Y", placement="right"):  
-                    ui.tags.span(ui.HTML(f"""
-                                        <script type="text/javascript" async 
-                                            src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML">
-                                        </script>
-                                        <span style="text-align: center; font-size: 17px; font-weight: normal; color: #1F4A89; line-height: 1;">
-                                            \\(H(Y)\\)
-                                        </span>
+            @reactive.effect
+            @reactive.event(input.btn_Y)
+            def highlight_all_dp():
+                tooltip_state = input.btn_Y()
+                # Get the current outline width
+                o_copy = o_outline_width.get()[:]
+                l_copy = l_outline_width.get()[:]
+                
+                if tooltip_state == "Hovered":
+                    # Logic for when the tooltip is hovered
+                    for i in range(len(o_copy)):
+                        o_copy[i] = 2  # Change outline width to 2 when hovered
+                    for i in range(len(l_copy)):
+                        l_copy[i] = 2
+                elif tooltip_state == "Not Hovered":
+                    # Logic for when the tooltip is not hovered
+                    for i in range(len(o_copy)):
+                        o_copy[i] = 0  # Reset outline width to 0 when not hovered
+                    for i in range(len(l_copy)):
+                        l_copy[i] = 0
+
+                # Set the updated outline width
+                o_outline_width.set(o_copy)
+                l_outline_width.set(l_copy)
+
+            @reactive.effect
+            @reactive.event(input.btn_all_lemons)
+            def highlight_all_lemons():
+                tooltip_state = input.btn_all_lemons()
+                l_copy = l_outline_width.get()[:]   
+                if tooltip_state == "Hovered":
+                    for i in range(len(l_copy)):
+                            l_copy[i] = 2
+                elif tooltip_state == "Not Hovered":
+                    for i in range(len(l_copy)):
+                        l_copy[i] = 0
+                l_outline_width.set(l_copy)
+
+            # with ui.tags.div(style="text-align: center;"):
+            #     # Tooltip only for H(Y)
+            #     with ui.tooltip(id="Y", placement="right"):  
+            #         ui.tags.span(ui.HTML(f"""
+            #                             <script type="text/javascript" async 
+            #                                 src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML">
+            #                             </script>
+            #                             <span style="text-align: center; font-size: 17px; font-weight: normal; color: #1F4A89; line-height: 1;">
+            #                                 \\(H(Y)\\)
+            #                             </span>
                                             
                                         
-                                    """))
-                    ui.HTML(f"""
-                            <script type="text/javascript" async 
-                                src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML">
-                            </script>
-                            \\(Y \\in \\lbrace oranges, lemons \\rbrace \\)""")  # Tooltip content
+            #                         """))
+            #         ui.HTML(f"""
+            #                 <script type="text/javascript" async 
+            #                     src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML">
+            #                 </script>
+            #                 \\(Y \\in \\lbrace oranges, lemons \\rbrace \\)""")  # Tooltip content
 
-                # "test" placed outside the tooltip but still inline
-                make_normal_text("= -")
-                lemons = 1
-                total = 2
-                with ui.tooltip(id="lemon1", placement="right"):  
-                    ui.tags.span(ui.HTML(f"""
-                                                <span style="font-size: 17px; font-weight: normal; color: #1F4A89; line-height: 1; vertical-align: middle;">
-                                                    \\(\\frac{lemons}{total}log_{2}\\frac{lemons}{total}\\)
-                                                </span>
-                                            """))
-                    "test" 
+            #     # "test" placed outside the tooltip but still inline
+            #     make_normal_text("= -")
+            #     lemons = 1
+            #     total = 2
+            #     with ui.tooltip(id="lemon1", placement="right"):  
+            #         ui.tags.span(ui.HTML(f"""
+            #                                     <span style="font-size: 17px; font-weight: normal; color: #1F4A89; line-height: 1; vertical-align: middle;">
+            #                                         \\(\\frac{lemons}{total}log_{2}\\frac{lemons}{total}\\)
+            #                                     </span>
+            #                                 """))
+            #         "test" 
 
                 #H(Y) = -\\frac{lemons}{total}log_{2}\\frac{lemons}{total} -\\frac{oranges}{total}log_{2}\\frac{oranges}{total}\\approx{h_y}\\
 
