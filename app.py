@@ -578,7 +578,7 @@ with ui.layout_columns():
                         </div>
                     """)
                 )
-        ui.div(style="flex-grow: 1;")
+        # ui.div(style="flex-grow: 1;")
         # Text to display information gain
         #@render.ui()
         #@reactive.event(input.calculate_button)
@@ -952,14 +952,14 @@ with ui.layout_columns():
             o_outline_width.set(o_copy)
 
         # Button to calculate information gain
-        ui.div(
-            ui.div(
-                ui.input_action_button("notation", "Toggle notation", style="color: #fff; background-color: #337ab7; border-color: #2e6da4;"),
-                ui.input_action_button("variables", "Toggle variables", style="color: #fff; background-color: #337ab7; border-color: #2e6da4;"),
-                ui.input_action_button("definition", "Toggle definition", style="color: #fff; background-color: #337ab7; border-color: #2e6da4;"),
-                style="display: flex; justify-content: space-between; gap: 10px; margin-top: auto;"
-            ),
-        ),
+        # ui.div(
+        #     ui.div(
+        #         ui.input_action_button("notation", "Toggle notation", style="color: #fff; background-color: #337ab7; border-color: #2e6da4;"),
+        #         ui.input_action_button("variables", "Toggle variables", style="color: #fff; background-color: #337ab7; border-color: #2e6da4;"),
+        #         ui.input_action_button("definition", "Toggle definition", style="color: #fff; background-color: #337ab7; border-color: #2e6da4;"),
+        #         style="display: flex; justify-content: space-between; gap: 10px; margin-top: auto;"
+        #     ),
+        # ),
         
         # Toggle buttons for notation, variables, and definition
         @reactive.effect
@@ -988,7 +988,9 @@ with ui.layout_columns():
                 ui.input_action_button("next_step", "Next step", style="color: #fff; background-color: #337ab7; border-color: #2e6da4; width: 100%;"),
                 style="display: flex; justify-content: space-between; gap: 10px; margin-top: auto;"
             ),
-        ),
+            style="display: flex; flex-direction: column; justify-content: flex-end; height: 20%;"  # Aligns the div to the bottom
+        )
+
 
         @reactive.effect
         @reactive.event(input.prev_step)
