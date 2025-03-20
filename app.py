@@ -227,7 +227,7 @@ ui.HTML("""
         }
 
         .tooltip-custom:hover {
-            background-color:rgb(111, 247, 240);  /* Light background color to highlight */
+            background-color:rgb(247, 186, 186);  /* Light background color to highlight */
             border-radius: 5px;  /* Optional: smooth rounded edges */
         }
 
