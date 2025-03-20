@@ -332,9 +332,8 @@ with ui.layout_columns():
                 x1=rect_coords.get()[1],  # end of the rectangle
                 y0=rect_coords.get()[2],  # lower bound of the rectangle
                 y1=rect_coords.get()[3],  # upper bound of the rectangle
-                line=dict(color="RoyalBlue", width=2),
-                fillcolor="LightSkyBlue",  # set fill color to blue
-                opacity=0.3
+                fillcolor="yellow",  # set fill color to blue
+                opacity=0.2
             )
             fig.add_trace(go.Scatter(
                 x=o_points.get()['x'],
@@ -342,7 +341,7 @@ with ui.layout_columns():
                 mode='markers',
                 name='Orange',
                 marker=dict(
-                    color='red',
+                    color='#E54C38',
                     size=12,
                     symbol='circle',
                     line=dict(
@@ -357,7 +356,7 @@ with ui.layout_columns():
                 mode='markers',
                 name='Lemon',
                 marker=dict(
-                    color='blue',
+                    color='#4A75D4',
                     size=12,
                     symbol='triangle-up',
                     line=dict(
@@ -390,7 +389,7 @@ with ui.layout_columns():
         # Buttons to add datapoints
         with ui.layout_columns():
             ui.input_action_button("add_orange_button", "Add orange datapoint", style="color: #fff; background-color: #E54C38; border-color: #E54C38")
-            ui.input_action_button("add_lemon_button", "Add lemon datapoint", style="color: #fff; background-color: #4a75d4; border-color: #4a75d4")
+            ui.input_action_button("add_lemon_button", "Add lemon datapoint", style="color: #fff; background-color: #4A75D4; border-color: #4A75D4")
         
         # Add a new orange datapoint button
         @reactive.effect
@@ -419,7 +418,7 @@ with ui.layout_columns():
         # Buttons to remove datapoints
         with ui.layout_columns():
             ui.input_action_button("remove_orange_button", "Remove orange datapoint", style="color: #fff; background-color: #E54C38; border-color: #E54C38")
-            ui.input_action_button("remove_lemon_button", "Remove lemon datapoint", style="color: #fff; background-color: #4a75d4; border-color: #4a75d4")
+            ui.input_action_button("remove_lemon_button", "Remove lemon datapoint", style="color: #fff; background-color: #4A75D4; border-color: #4A75D4")
 
         # Remove an orange datapoint button
         @reactive.effect
