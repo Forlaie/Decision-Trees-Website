@@ -4,6 +4,7 @@ import plotly.graph_objects as go
 from shinywidgets import render_plotly
 import math
 
+# Calculation helper functions
 def calculate_entropy(n1, n2, t):
     p1 = n1/t
     p2 = n2/t
@@ -20,8 +21,9 @@ def calculate_condent(n1, n2, t, e1, e2):
 def calculate_infogain(e1, e2):
     return round(e1-e2, 2)
 
+# Create the information gain calculations in mathjax
+# Show equations corresponding to what step of the calculation the user is on
 def create_mathjax_content(info):
-    # Base MathJax content
     lines = {
         1: f"""
             <div style="text-align: center; font-size: 20px; font-weight: normal; color: #1F4A89; line-height: 1;">
@@ -187,11 +189,13 @@ def create_mathjax_content(info):
     for i in range(1, 6):
         if i <= step.get():
             mathjax_html += lines[i]
+    # Add blank spacing to keep formatting the same
     for i in range(5-step.get()):
         mathjax_html += lines[6]
+    
     return mathjax_html
 
-# Starter datapoints to plot
+# Starter datapoints to plot and other reactive value setups
 o_points = reactive.value({'x': [1, 1, 5, 8, 8], 'y': [3, 7, 7, 4, 7]})
 l_points = reactive.value({'x': [5, 8], 'y': [4, 3]})
 x_coord = reactive.value(0)
@@ -209,7 +213,7 @@ ui.page_opts(
     fillable=True,
 )
 
-# Information gain page
+# Setting up styling and scripts
 ui.HTML("""
     <script type="text/javascript" async 
         src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML">
@@ -273,7 +277,7 @@ ui.HTML("""
 """)
 
 
-# Sidebar for coordinate selection
+# Sidebar for coordinate and split selection
 with ui.sidebar(open="open", bg="#f8f8f8"):
     ui.HTML('<b>Datapoint Coordinate Selection</b>')
 
@@ -307,12 +311,10 @@ with ui.sidebar(open="open", bg="#f8f8f8"):
     def change_split_location():
         split_loc.set(input.split_loc())
 
-# Put cards in a column
 with ui.layout_columns():
-    # Features card
+    # Dataset card
     with ui.card():
         ui.card_header("Dataset", style="font-size: 20px;")
-
         # Plot where students will be putting datapoints and split
         @render_plotly
         def feature_plot():
@@ -322,16 +324,17 @@ with ui.layout_columns():
             #     width=700,
             #     margin=dict(t=10, b=10, l=10, r=10)  # Adjust the margins if needed
             # )
-            # Add orange points (circles)
+            # Highlights from tooltip
             fig.add_shape(
                 type="rect",
-                x0=rect_coords.get()[0],  # start of the rectangle (x < 3)
-                x1=rect_coords.get()[1],  # end of the rectangle
-                y0=rect_coords.get()[2],  # lower bound of the rectangle
-                y1=rect_coords.get()[3],  # upper bound of the rectangle
-                fillcolor="yellow",  # set fill color to blue
+                x0=rect_coords.get()[0],
+                x1=rect_coords.get()[1],
+                y0=rect_coords.get()[2],
+                y1=rect_coords.get()[3],
+                fillcolor="yellow",
                 opacity=0.2
             )
+            # Orange points
             fig.add_trace(go.Scatter(
                 x=o_points.get()['x'],
                 y=o_points.get()['y'],
@@ -347,6 +350,7 @@ with ui.layout_columns():
                     )
                 )
             ))
+            # Lemon points
             fig.add_trace(go.Scatter(
                 x=l_points.get()['x'],
                 y=l_points.get()['y'],
@@ -362,6 +366,7 @@ with ui.layout_columns():
                     )
                 )
             ))
+            # Make plot
             fig.update_layout(
                 xaxis=dict(range=[0, 10]),
                 yaxis=dict(range=[0, 10]),
@@ -376,7 +381,7 @@ with ui.layout_columns():
                 xaxis_gridwidth=1,
                 yaxis_gridwidth=1
             )
-            # split location
+            # Split location
             if (vertical_split.get()):
                 fig.add_vline(x=split_loc.get(), line=dict(color="purple", width=2, dash="dash"), name="Vertical Line")
             else:
@@ -451,7 +456,8 @@ with ui.layout_columns():
     with ui.card():
         ui.card_header("Calculations", style="font-size: 20px;")
         @render.ui()
-        def show_stuff():
+        # Shows equation
+        def show_equation():
             return ui.p(
                 ui.HTML(f"""
                     <div style="text-align: center; font-size: 20px; font-weight: normal; color: #1F4A89;">
@@ -467,21 +473,13 @@ with ui.layout_columns():
                         {tooltip_test("HYXinfo", f"Conditional Entropy: The uncertainty of random variable Y after observing X", f"H(Y|X)")}
                     </div>
                     
-                    <script>
-                        document.getElementById("IGinfo").addEventListener("mouseenter", function() {{
-                            Shiny.setInputValue("btn_iginfo", "Hovered", {{priority: "event"}});
-                        }});
-                        document.getElementById("IGinfo").addEventListener("mouseleave", function() {{
-                            Shiny.setInputValue("btn_iginfo", "Not Hovered", {{priority: "event"}});
-                        }});
-                    
+                    <script>                    
                         updateMathJax();
                     </script>
                 """)
             )
-        # Text to display information gain
-        #@render.ui()
-        #@reactive.event(input.calculate_button)
+        
+        # Helper function to calculate information gain
         def calculate():
             side1 = "left" if vertical_split.get() else "below"
             side2 = "right" if vertical_split.get() else "above"
@@ -517,14 +515,17 @@ with ui.layout_columns():
                     'infogain': infogain}
             return info
 
+        # Helper function to make tooltips
         def tooltip_test(id, tip, content):
             return f"""<span id="{id}" class="tooltip-custom" data-tooltip="{tip}">\\( {content} \\)</span>"""
 
+        # Render calculations
         @render.ui
-        def testing_mathjax():
+        def calculations_mathjax():
             info = calculate()
             return ui.HTML(create_mathjax_content(info))
         
+        # All these functions are to make correspondings changes to the plot based on user mouse hovering (tooltips)
         @reactive.effect
         @reactive.event(input.btn_side2)
         def highlight_side1():
@@ -851,6 +852,7 @@ with ui.layout_columns():
                 rect_coords.set(rect_copy)
             o_outline_width.set(o_copy)
         
+        # Step calculation buttons
         ui.div(
             ui.div(
                 ui.input_action_button("prev_step", "Previous step", style="color: #fff; background-color: #337ab7; border-color: #2e6da4; width: 100%;"),
@@ -860,7 +862,7 @@ with ui.layout_columns():
             style="display: flex; flex-direction: column; justify-content: flex-end; height: 20%;"  # Aligns the div to the bottom
         )
 
-
+        # Logic for step calculations
         @reactive.effect
         @reactive.event(input.prev_step)
         def go_back():
