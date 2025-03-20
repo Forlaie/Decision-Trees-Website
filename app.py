@@ -278,15 +278,15 @@ ui.HTML("""
 
 # Sidebar for coordinate selection
 with ui.sidebar(open="open", bg="#f8f8f8"):
-    "Datapoint Coordinate Selection"
-    ui.input_slider("xcoord", "X-coord", 0, 10, 0),
+    ui.HTML('<u>Datapoint Coordinate Selection</u>')
+
+    ui.input_numeric("xcoord", "X-coordinate (0-10)", 1, min=0, max=10),
     @reactive.effect
     @reactive.event(input.xcoord)
-    def xvalue():
+    def yvalue():
         x_coord.set(input.xcoord())
     
-    ui.input_numeric("ycoord", "Y-coord", 1, min=1, max=10),
-    
+    ui.input_numeric("ycoord", "Y-coordinate (0-10)", 1, min=0, max=10),
     @reactive.effect
     @reactive.event(input.ycoord)
     def yvalue():
@@ -297,6 +297,7 @@ with ui.sidebar(open="open", bg="#f8f8f8"):
         if not isinstance(input.ycoord(), int):
             return "Invalid coordinate"
 
+    ui.HTML('<u>Split</u>')
     ui.input_switch("vertical", "Vertical Split", True)  
     @reactive.effect
     @reactive.event(input.vertical)
