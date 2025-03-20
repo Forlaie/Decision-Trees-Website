@@ -198,9 +198,6 @@ x_coord = reactive.value(0)
 y_coord = reactive.value(0)
 vertical_split = reactive.value(True)
 split_loc = reactive.value(3)
-notation = reactive.value(False)
-variables = reactive.value(False)
-definition = reactive.value(False)
 o_outline_width = reactive.value([0, 0, 0, 0, 0])
 l_outline_width = reactive.value([0, 0])
 step = reactive.value(5)
@@ -278,7 +275,7 @@ ui.HTML("""
 
 # Sidebar for coordinate selection
 with ui.sidebar(open="open", bg="#f8f8f8"):
-    ui.HTML('<u>Datapoint Coordinate Selection</u>')
+    ui.HTML('<b>Datapoint Coordinate Selection</b>')
 
     ui.input_numeric("xcoord", "X-coordinate (0-10)", 1, min=0, max=10),
     @reactive.effect
@@ -297,7 +294,7 @@ with ui.sidebar(open="open", bg="#f8f8f8"):
         if not isinstance(input.ycoord(), int):
             return "Invalid coordinate"
 
-    ui.HTML('<u>Split</u>')
+    ui.HTML('<b>Split Selection</b>')
     ui.input_switch("vertical", "Vertical Split", True)  
     @reactive.effect
     @reactive.event(input.vertical)
@@ -455,130 +452,33 @@ with ui.layout_columns():
         ui.card_header("Calculations", style="font-size: 20px;")
         @render.ui()
         def show_stuff():
-            if notation.get():
-                return ui.p(
-                    ui.HTML("""
-                        <div style="text-align: center; font-size: 24px; font-weight: normal; color: #9370DB;">
-                            <span style="font-weight: bold; color: #1F4A89;">Equation:</span> 
-                            IG(<span style="color: #1F4A89;">Y</span>|<span style="color: #1F4A89;">X</span>) 
-                            <span style="color: #1F4A89;">=</span> 
-                            H(<span style="color: #1F4A89;">Y</span>) 
-                            <span style="color: #1F4A89;">-</span> 
-                            H(<span style="color: #1F4A89;">Y</span>|<span style="color: #1F4A89;">X</span>)
-                        </div>
-                        
-                        <div style="display: flex; justify-content: center; gap: 20px;">
-                            <div style="position: relative; text-align: center; margin-left: 150px;">
-                                <span style="font-size: 18px; color: #9370DB;">Information gain</span>
-                                <div style="
-                                    position: absolute;
-                                    top: -35px;
-                                    left: 55%;
-                                    transform: translateX(-50%) rotate(35deg);
-                                    font-size: 30px;
-                                    color: #9370DB;">
-                                    &uarr;
-                                </div>
-                            </div>
-                            
-                            <div style="position: relative; text-align: center;">
-                                <span style="font-size: 18px; color: #9370DB;">Entropy</span>
-                                <div style="
-                                    position: absolute;
-                                    top: -35px;
-                                    left: 50%;
-                                    transform: translateX(-50%) rotate(-45deg);
-                                    font-size: 30px;
-                                    color: #9370DB;">
-                                    &uarr;
-                                </div>
-                            </div>
-                            
-                            <div style="position: relative; text-align: center;">
-                                <span style="font-size: 18px; color: #9370DB;">Conditional entropy</span>
-                                <div style="
-                                    position: absolute;
-                                    top: -35px;
-                                    left: 30%;
-                                    transform: translateX(-50%) rotate(-50deg);
-                                    font-size: 30px;
-                                    color: #9370DB;">
-                                    &uarr;
-                                </div>
-                            </div>
-                        </div>
-                    """)
-                )
-            elif variables.get():
-                return ui.p(
-                    ui.HTML("""  
-                        <div style="text-align: center; font-size: 24px; font-weight: normal; color: #1F4A89;">
-                            <span style="font-weight: bold;">Equation:</span> 
-                            IG(<span style="color: #92D050;">Y</span>|<span style="color: #F79709;">X</span>) 
-                            <span style="color: #1F4A89;">=</span> 
-                            H(<span style="color: #92D050;">Y</span>) 
-                            <span style="color: #1F4A89;">-</span> 
-                            H(<span style="color: #92D050;">Y</span>|<span style="color: #F79709;">X</span>)
-                        </div>
-                        
-                        <div style="display: flex; justify-content: center;">
-                            <div style="position: relative; text-align: center; margin-left: 220px;">
-                                <span style="font-size: 18px; color: #92D050;">Output class (e.g. orange or lemon)</span>
-                                <div style="
-                                    position: absolute;
-                                    top: -35px;
-                                    left: 60%;
-                                    transform: translateX(-50%) rotate(5deg);
-                                    font-size: 30px;
-                                    color: #92D050;">
-                                    &uarr;
-                                </div>
-                            </div>
-                            
-                            <div style="position: relative; text-align: center;">
-                                <span style="font-size: 18px; color: #F79709;">Which side of the split the datapoint is on (e.g. left or right)</span>
-                                <div style="
-                                    position: absolute;
-                                    top: -35px;
-                                    left: 40%;
-                                    transform: translateX(-50%) rotate(-25deg);
-                                    font-size: 30px;
-                                    color: #F79709;">
-                                    &uarr;
-                                </div>
-                            </div>
-                        </div>
-                    """)
-                )
-            elif definition.get():
-                return ui.p(
-                    ui.HTML("""
-                        <div style="text-align: center; font-size: 24px; font-weight: normal; color: #1F4A89;">
-                            <span style="font-weight: bold;">Equation:</span> 
-                            IG(Y|X) = H(Y) - H(Y|X)
-                        </div>
-                        
-                        <div style="text-align: center; font-size: 18px; font-weight: normal; color: #1F4A89;">
-                            This is the equation for information gain. It tells us how much information is gained about Y after observing X. In other words, how much uncertainty (entropy) is reduced by our chosen split.
-                        </div>
-                        
-                        <div style="text-align: left; font-size: 18px; font-weight: normal; color: #1F4A89;">
-                            Entropy H(Y): Characterizes the uncertainty in a draw of a random variable<br>
-                            Conditional Entropy H(Y|X): Characterizes the uncertainty in a draw of Y after observing X<br>
-                            Information Gain IG(Y|X): How much information is gained about Y after observing X
-                        </div>
-                    """)
-                )
-            else:
-                return ui.p(
-                    ui.HTML("""
-                        <div style="text-align: center; font-size: 24px; font-weight: normal; color: #1F4A89;">
-                            <span style="font-weight: bold;">Equation:</span>
-                            IG(Y|X) = H(Y) - H(Y|X)
-                        </div>
-                    """)
-                )
-        # ui.div(style="flex-grow: 1;")
+            return ui.p(
+                ui.HTML(f"""
+                    <div style="text-align: center; font-size: 20px; font-weight: normal; color: #1F4A89;">
+                        <span>\\(Equation: \\)</span>
+                        {tooltip_test("IGinfo", f"Information Gain: How much information is gained about Y after observing X", f"IG")}
+                        <span>\\((\\)</span>
+                        {tooltip_test("Yinfo", f"Output class (e.g. orange, lemon)", f"Y")}
+                        <span>\\(|\\)</span>
+                        {tooltip_test("Xinfo", f"The side of the split (e.g. left, right)", f"X")}
+                        <span>\\()=\\)</span>
+                        {tooltip_test("HYinfo", f"Entropy: The uncertainty of random variable Y", f"H(Y)")}
+                        <span>\\(-\\)</span>
+                        {tooltip_test("HYXinfo", f"Conditional Entropy: The uncertainty of random variable Y after observing X", f"H(Y|X)")}
+                    </div>
+                    
+                    <script>
+                        document.getElementById("IGinfo").addEventListener("mouseenter", function() {{
+                            Shiny.setInputValue("btn_iginfo", "Hovered", {{priority: "event"}});
+                        }});
+                        document.getElementById("IGinfo").addEventListener("mouseleave", function() {{
+                            Shiny.setInputValue("btn_iginfo", "Not Hovered", {{priority: "event"}});
+                        }});
+                    
+                        updateMathJax();
+                    </script>
+                """)
+            )
         # Text to display information gain
         #@render.ui()
         #@reactive.event(input.calculate_button)
@@ -950,37 +850,6 @@ with ui.layout_columns():
                 rect_copy[3] = 0
                 rect_coords.set(rect_copy)
             o_outline_width.set(o_copy)
-
-        # Button to calculate information gain
-        # ui.div(
-        #     ui.div(
-        #         ui.input_action_button("notation", "Toggle notation", style="color: #fff; background-color: #337ab7; border-color: #2e6da4;"),
-        #         ui.input_action_button("variables", "Toggle variables", style="color: #fff; background-color: #337ab7; border-color: #2e6da4;"),
-        #         ui.input_action_button("definition", "Toggle definition", style="color: #fff; background-color: #337ab7; border-color: #2e6da4;"),
-        #         style="display: flex; justify-content: space-between; gap: 10px; margin-top: auto;"
-        #     ),
-        # ),
-        
-        # Toggle buttons for notation, variables, and definition
-        @reactive.effect
-        @reactive.event(input.notation)
-        def toggle_notation():
-            notation.set(not notation.get())
-            variables.set(False)
-            definition.set(False)
-            
-        @reactive.effect
-        @reactive.event(input.variables)
-        def toggle_variables():
-            variables.set(not variables.get())
-            notation.set(False)
-            definition.set(False)
-        @reactive.effect
-        @reactive.event(input.definition)
-        def toggle_definition():
-            definition.set(not definition.get())
-            notation.set(False)
-            variables.set(False)
         
         ui.div(
             ui.div(
