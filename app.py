@@ -435,31 +435,46 @@ with ui.layout_columns():
             ))
             # Make plot
             fig.update_layout(
-                xaxis=dict(range=[0, 10]),
-                yaxis=dict(range=[0, 10]),
+                xaxis=dict(
+                    range=[0, 10],
+                    fixedrange=True,  # Locks zooming
+                    showgrid=True,
+                    gridcolor='rgba(0, 0, 0, 0.1)',
+                    gridwidth=1
+                ),
+                yaxis=dict(
+                    range=[0, 10],
+                    fixedrange=True,  # Locks zooming
+                    showgrid=True,
+                    gridcolor='rgba(0, 0, 0, 0.1)',
+                    gridwidth=1
+                ),
                 xaxis_title="Width",
                 yaxis_title="Height",
                 showlegend=True,
                 plot_bgcolor='white',
-                xaxis_showgrid=True,
-                yaxis_showgrid=True,
-                xaxis_gridcolor='rgba(0, 0, 0, 0.1)',
-                yaxis_gridcolor='rgba(0, 0, 0, 0.1)',
-                xaxis_gridwidth=1,
-                yaxis_gridwidth=1
+                dragmode=False,  # Disables all drag interactions
+                modebar=dict(
+                    remove=["select2d", "lasso2d"]
+                )
             )
+
             # Split location
             if (vertical_split.get()):
                 fig.add_vline(x=split_loc.get(), line=dict(color="purple", width=2, dash="dash"), name="Vertical Line")
             else:
                 fig.add_hline(y=split_loc.get(), line=dict(color="purple", width=2, dash="dash"), name="Horizontal Line")
+            
             return fig
         
         # Buttons to add datapoints
 
     # Calculations card
     with ui.card():
-        ui.card_header("Calculations", style="font-size: 20px;")
+        ui.card_header(
+            ui.HTML('Calculations <br> <i><span style="font-weight: normal; font-size: 14px;">(Hover over different components of the equation to see where the numbers come from!)</span></i>'),
+            style="font-size: 20px;"
+        )
         @render.ui()
         def show_stuff():
             if notation.get():
@@ -718,9 +733,9 @@ with ui.layout_columns():
 
             if tooltip_state == "Hovered":
                 for i in range(len(o_copy)):
-                    if vertical_split.get() == True and o_points.get()['x'][i] > split_loc.get():
+                    if vertical_split.get() == True and o_points.get()['x'][i] >= split_loc.get():
                         o_copy[i] = 2
-                    if vertical_split.get() == False and o_points.get()['y'][i] > split_loc.get():
+                    if vertical_split.get() == False and o_points.get()['y'][i] >= split_loc.get():
                         o_copy[i] = 2
                 if vertical_split.get() == True:
                     rect_copy[0] = 10
@@ -755,9 +770,9 @@ with ui.layout_columns():
             if tooltip_state == "Hovered":
                 # Logic for when the tooltip is hovered
                 for i in range(len(l_copy)):
-                    if vertical_split.get() == True and l_points.get()['x'][i] > split_loc.get():
+                    if vertical_split.get() == True and l_points.get()['x'][i] >= split_loc.get():
                         l_copy[i] = 2  # Change outline width to 2 when hovered
-                    if vertical_split.get() == False and l_points.get()['y'][i] > split_loc.get():
+                    if vertical_split.get() == False and l_points.get()['y'][i] >= split_loc.get():
                         l_copy[i] = 2
                 if vertical_split.get() == True:
                     rect_copy[0] = 10
