@@ -206,6 +206,9 @@ o_outline_width = reactive.value([0, 0, 0, 0, 0])
 l_outline_width = reactive.value([0, 0])
 step = reactive.value(5)
 rect_coords = reactive.value([0, 0, 0, 0])
+notation = reactive.value(False)
+variables = reactive.value(False)
+definition = reactive.value(False)
 
 # Make main screen with title
 ui.page_opts(
@@ -279,15 +282,15 @@ ui.HTML("""
 
 # Sidebar for coordinate and split selection
 with ui.sidebar(open="open", bg="#f8f8f8"):
-    ui.HTML('<b>Datapoint Coordinate Selection</b>')
+    ui.HTML('<b>Datapoint Selection</b>')
 
-    ui.input_numeric("xcoord", "X-coordinate (0-10)", 1, min=0, max=10),
+    ui.input_numeric("xcoord", "Width in cm (0-10)", 1, min=0, max=10),
     @reactive.effect
     @reactive.event(input.xcoord)
     def yvalue():
         x_coord.set(input.xcoord())
     
-    ui.input_numeric("ycoord", "Y-coordinate (0-10)", 1, min=0, max=10),
+    ui.input_numeric("ycoord", "Height in cm (0-10)", 1, min=0, max=10),
     @reactive.effect
     @reactive.event(input.ycoord)
     def yvalue():
@@ -296,7 +299,69 @@ with ui.sidebar(open="open", bg="#f8f8f8"):
     @render.text()
     def error_check():
         if not isinstance(input.ycoord(), int):
-            return "Invalid coordinate"
+            return "Invalid input"
+
+    ui.input_select(  
+        "select_add",  
+        "Select what datapoint to add:",  
+        {"Orange": "Orange", "Lemon": "Lemon"},  
+    )
+
+    ui.input_action_button("add_dp", "Add", style="color: #fff; background-color: #337ab7; border-color: #2e6da4; width: 100%;")
+    @reactive.effect
+    @reactive.event(input.add_dp)
+    def add_dp():
+        if input.select_add() == "Orange":
+            curr_points = o_points.get()
+            updated_points = {
+                'x': curr_points['x'] + [x_coord.get()],
+                'y': curr_points['y'] + [y_coord.get()],
+            }
+            o_points.set(updated_points)
+            o_outline_width.get().append(0)
+        else:
+            curr_points = l_points.get()
+            updated_points = {
+                'x': curr_points['x'] + [x_coord.get()],
+                'y': curr_points['y'] + [y_coord.get()],
+            }
+            l_points.set(updated_points)
+            l_outline_width.get().append(0)
+    
+    ui.HTML('<b>Datapoint Removal</b>')
+
+    ui.input_select(  
+        "select_remove",  
+        "Select a datapoint to remove (the latest one will be removed):",  
+        {"Orange": "Orange", "Lemon": "Lemon"},  
+    )
+
+    ui.input_action_button("remove_dp", "Remove", style="color: #fff; background-color: #337ab7; border-color: #2e6da4; width: 100%;")
+    @reactive.effect
+    @reactive.event(input.remove_dp)
+    def remove_dp():
+        if input.select_remove() == "Orange":
+            curr_points = o_points.get()
+            if len(curr_points['x']) > 0:
+                curr_points['x'].pop()
+                curr_points['y'].pop()
+                updated_points = {
+                    'x': curr_points['x'],
+                    'y': curr_points['y'],
+                }
+                o_points.set(updated_points)
+                o_outline_width.get().pop()
+        else:
+            curr_points = l_points.get()
+            if len(curr_points['x']) > 0:
+                curr_points['x'].pop()
+                curr_points['y'].pop()
+                updated_points = {
+                    'x': curr_points['x'],
+                    'y': curr_points['y'],
+                }
+                l_points.set(updated_points)
+                l_outline_width.get().pop()
 
     ui.HTML('<b>Split Selection</b>')
     ui.input_switch("vertical", "Vertical Split", True)  
@@ -389,95 +454,135 @@ with ui.layout_columns():
             return fig
         
         # Buttons to add datapoints
-        with ui.layout_columns():
-            ui.input_action_button("add_orange_button", "Add orange datapoint", style="color: #fff; background-color: #E54C38; border-color: #E54C38")
-            ui.input_action_button("add_lemon_button", "Add lemon datapoint", style="color: #fff; background-color: #4A75D4; border-color: #4A75D4")
-        
-        # Add a new orange datapoint button
-        @reactive.effect
-        @reactive.event(input.add_orange_button)
-        def add_orange():
-            curr_points = o_points.get()
-            updated_points = {
-                'x': curr_points['x'] + [x_coord.get()],
-                'y': curr_points['y'] + [y_coord.get()],
-            }
-            o_points.set(updated_points)
-            o_outline_width.get().append(0)
-        
-        # Add a new lemon datapoint button
-        @reactive.effect
-        @reactive.event(input.add_lemon_button)
-        def add_lemon():
-            curr_points = l_points.get()
-            updated_points = {
-                'x': curr_points['x'] + [x_coord.get()],
-                'y': curr_points['y'] + [y_coord.get()],
-            }
-            l_points.set(updated_points)
-            l_outline_width.get().append(0)
-        
-        # Buttons to remove datapoints
-        with ui.layout_columns():
-            ui.input_action_button("remove_orange_button", "Remove orange datapoint", style="color: #fff; background-color: #E54C38; border-color: #E54C38")
-            ui.input_action_button("remove_lemon_button", "Remove lemon datapoint", style="color: #fff; background-color: #4A75D4; border-color: #4A75D4")
-
-        # Remove an orange datapoint button
-        @reactive.effect
-        @reactive.event(input.remove_orange_button)
-        def remove_orange():
-            curr_points = o_points.get()
-            if len(curr_points['x']) > 0:
-                curr_points['x'].pop()
-                curr_points['y'].pop()
-                updated_points = {
-                    'x': curr_points['x'],
-                    'y': curr_points['y'],
-                }
-                o_points.set(updated_points)
-                o_outline_width.get().pop()
-        
-        # Remove a lemon datapoint button
-        @reactive.effect
-        @reactive.event(input.remove_lemon_button)
-        def remove_lemon():
-            curr_points = l_points.get()
-            if len(curr_points['x']) > 0:
-                curr_points['x'].pop()
-                curr_points['y'].pop()
-                updated_points = {
-                    'x': curr_points['x'],
-                    'y': curr_points['y'],
-                }
-                l_points.set(updated_points)
-                l_outline_width.get().pop()
 
     # Calculations card
     with ui.card():
         ui.card_header("Calculations", style="font-size: 20px;")
         @render.ui()
-        # Shows equation
-        def show_equation():
-            return ui.p(
-                ui.HTML(f"""
-                    <div style="text-align: center; font-size: 20px; font-weight: normal; color: #1F4A89;">
-                        <span>\\(Equation: \\)</span>
-                        {tooltip_test("IGinfo", f"Information Gain: How much information is gained about Y after observing X", f"IG")}
-                        <span>\\((\\)</span>
-                        {tooltip_test("Yinfo", f"Output class (e.g. orange, lemon)", f"Y")}
-                        <span>\\(|\\)</span>
-                        {tooltip_test("Xinfo", f"The side of the split (e.g. left, right)", f"X")}
-                        <span>\\()=\\)</span>
-                        {tooltip_test("HYinfo", f"Entropy: The uncertainty of random variable Y", f"H(Y)")}
-                        <span>\\(-\\)</span>
-                        {tooltip_test("HYXinfo", f"Conditional Entropy: The uncertainty of random variable Y after observing X", f"H(Y|X)")}
-                    </div>
-                    
-                    <script>                    
-                        updateMathJax();
-                    </script>
-                """)
-            )
+        def show_stuff():
+            if notation.get():
+                return ui.p(
+                    ui.HTML("""
+                        <div style="text-align: center; font-size: 24px; font-weight: normal; color: #9370DB;">
+                            <span style="font-weight: bold; color: #1F4A89;">Equation:</span> 
+                            IG(<span style="color: #1F4A89;">Y</span>|<span style="color: #1F4A89;">X</span>) 
+                            <span style="color: #1F4A89;">=</span> 
+                            H(<span style="color: #1F4A89;">Y</span>) 
+                            <span style="color: #1F4A89;">-</span> 
+                            H(<span style="color: #1F4A89;">Y</span>|<span style="color: #1F4A89;">X</span>)
+                        </div>
+                        
+                        <div style="display: flex; justify-content: center; gap: 20px;">
+                            <div style="position: relative; text-align: center; margin-left: 150px;">
+                                <span style="font-size: 18px; color: #9370DB;">Information gain</span>
+                                <div style="
+                                    position: absolute;
+                                    top: -35px;
+                                    left: 55%;
+                                    transform: translateX(-50%) rotate(35deg);
+                                    font-size: 30px;
+                                    color: #9370DB;">
+                                    &uarr;
+                                </div>
+                            </div>
+                            
+                            <div style="position: relative; text-align: center;">
+                                <span style="font-size: 18px; color: #9370DB;">Entropy</span>
+                                <div style="
+                                    position: absolute;
+                                    top: -35px;
+                                    left: 50%;
+                                    transform: translateX(-50%) rotate(-45deg);
+                                    font-size: 30px;
+                                    color: #9370DB;">
+                                    &uarr;
+                                </div>
+                            </div>
+                            
+                            <div style="position: relative; text-align: center;">
+                                <span style="font-size: 18px; color: #9370DB;">Conditional entropy</span>
+                                <div style="
+                                    position: absolute;
+                                    top: -35px;
+                                    left: 30%;
+                                    transform: translateX(-50%) rotate(-50deg);
+                                    font-size: 30px;
+                                    color: #9370DB;">
+                                    &uarr;
+                                </div>
+                            </div>
+                        </div>
+                    """)
+                )
+            elif variables.get():
+                return ui.p(
+                    ui.HTML("""  
+                        <div style="text-align: center; font-size: 24px; font-weight: normal; color: #1F4A89;">
+                            <span style="font-weight: bold;">Equation:</span> 
+                            IG(<span style="color: #92D050;">Y</span>|<span style="color: #F79709;">X</span>) 
+                            <span style="color: #1F4A89;">=</span> 
+                            H(<span style="color: #92D050;">Y</span>) 
+                            <span style="color: #1F4A89;">-</span> 
+                            H(<span style="color: #92D050;">Y</span>|<span style="color: #F79709;">X</span>)
+                        </div>
+                        
+                        <div style="display: flex; justify-content: center;">
+                            <div style="position: relative; text-align: center; margin-left: 220px;">
+                                <span style="font-size: 18px; color: #92D050;">Output class (e.g. orange or lemon)</span>
+                                <div style="
+                                    position: absolute;
+                                    top: -35px;
+                                    left: 60%;
+                                    transform: translateX(-50%) rotate(5deg);
+                                    font-size: 30px;
+                                    color: #92D050;">
+                                    &uarr;
+                                </div>
+                            </div>
+                            
+                            <div style="position: relative; text-align: center;">
+                                <span style="font-size: 18px; color: #F79709;">Which side of the split the datapoint is on (e.g. left or right)</span>
+                                <div style="
+                                    position: absolute;
+                                    top: -35px;
+                                    left: 40%;
+                                    transform: translateX(-50%) rotate(-25deg);
+                                    font-size: 30px;
+                                    color: #F79709;">
+                                    &uarr;
+                                </div>
+                            </div>
+                        </div>
+                    """)
+                )
+            elif definition.get():
+                return ui.p(
+                    ui.HTML("""
+                        <div style="text-align: center; font-size: 24px; font-weight: normal; color: #1F4A89;">
+                            <span style="font-weight: bold;">Equation:</span> 
+                            IG(Y|X) = H(Y) - H(Y|X)
+                        </div>
+                        
+                        <div style="text-align: center; font-size: 18px; font-weight: normal; color: #1F4A89;">
+                            This is the equation for information gain. It tells us how much information is gained about Y after observing X. In other words, how much uncertainty (entropy) is reduced by our chosen split.
+                        </div>
+                        
+                        <div style="text-align: left; font-size: 18px; font-weight: normal; color: #1F4A89;">
+                            Entropy H(Y): Characterizes the uncertainty in a draw of a random variable<br>
+                            Conditional Entropy H(Y|X): Characterizes the uncertainty in a draw of Y after observing X<br>
+                            Information Gain IG(Y|X): How much information is gained about Y after observing X
+                        </div>
+                    """)
+                )
+            else:
+                return ui.p(
+                    ui.HTML("""
+                        <div style="text-align: center; font-size: 24px; font-weight: normal; color: #1F4A89;">
+                            <span style="font-weight: bold;">Equation:</span>
+                            IG(Y|X) = H(Y) - H(Y|X)
+                        </div>
+                    """)
+                )
         
         # Helper function to calculate information gain
         def calculate():
@@ -852,17 +957,45 @@ with ui.layout_columns():
                 rect_coords.set(rect_copy)
             o_outline_width.set(o_copy)
         
-        # Step calculation buttons
+        # Button to calculate information gain
+        ui.div(
+            ui.div(
+                ui.input_action_button("notation", "Toggle notation", style="color: #fff; background-color: #337ab7; border-color: #2e6da4;"),
+                ui.input_action_button("variables", "Toggle variables", style="color: #fff; background-color: #337ab7; border-color: #2e6da4;"),
+                ui.input_action_button("definition", "Toggle definition", style="color: #fff; background-color: #337ab7; border-color: #2e6da4;"),
+                style="display: flex; justify-content: space-between; gap: 10px;"
+            ),
+        ),
+        
         ui.div(
             ui.div(
                 ui.input_action_button("prev_step", "Previous step", style="color: #fff; background-color: #337ab7; border-color: #2e6da4; width: 100%;"),
                 ui.input_action_button("next_step", "Next step", style="color: #fff; background-color: #337ab7; border-color: #2e6da4; width: 100%;"),
-                style="display: flex; justify-content: space-between; gap: 10px; margin-top: auto;"
+                style="display: flex; justify-content: space-between; gap: 10px;"
             ),
-            style="display: flex; flex-direction: column; justify-content: flex-end; height: 20%;"  # Aligns the div to the bottom
-        )
+        ),
 
-        # Logic for step calculations
+        # Toggle buttons for notation, variables, and definition
+        @reactive.effect
+        @reactive.event(input.notation)
+        def toggle_notation():
+            notation.set(not notation.get())
+            variables.set(False)
+            definition.set(False)
+            
+        @reactive.effect
+        @reactive.event(input.variables)
+        def toggle_variables():
+            variables.set(not variables.get())
+            notation.set(False)
+            definition.set(False)
+        @reactive.effect
+        @reactive.event(input.definition)
+        def toggle_definition():
+            definition.set(not definition.get())
+            notation.set(False)
+            variables.set(False)
+
         @reactive.effect
         @reactive.event(input.prev_step)
         def go_back():
