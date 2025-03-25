@@ -284,13 +284,19 @@ ui.HTML("""
 with ui.sidebar(open="open", bg="#f8f8f8"):
     ui.HTML('<b>Datapoint Selection</b>')
 
-    ui.input_numeric("xcoord", "Width in cm (0-10)", 1, min=0, max=10),
+    ui.div(
+        ui.input_numeric("xcoord", "Width in cm (0-10)", 1, min=0, max=10),
+        ui.input_numeric("ycoord", "Height in cm (0-10)", 1, min=0, max=10),
+        ui.input_select("select_add", "Select what datapoint to add:", {"Orange": "Orange", "Lemon": "Lemon"}),
+        ui.input_action_button("add_dp", "Add", style="color: #fff; background-color: #337ab7; border-color: #2e6da4; width: 100%; heigth: 70%;"),
+        class_="gap-0 mb-0"
+    )
+
     @reactive.effect
     @reactive.event(input.xcoord)
     def yvalue():
         x_coord.set(input.xcoord())
     
-    ui.input_numeric("ycoord", "Height in cm (0-10)", 1, min=0, max=10),
     @reactive.effect
     @reactive.event(input.ycoord)
     def yvalue():
@@ -301,13 +307,6 @@ with ui.sidebar(open="open", bg="#f8f8f8"):
         if not isinstance(input.ycoord(), int):
             return "Invalid input"
 
-    ui.input_select(  
-        "select_add",  
-        "Select what datapoint to add:",  
-        {"Orange": "Orange", "Lemon": "Lemon"},  
-    )
-
-    ui.input_action_button("add_dp", "Add", style="color: #fff; background-color: #337ab7; border-color: #2e6da4; width: 100%;")
     @reactive.effect
     @reactive.event(input.add_dp)
     def add_dp():
@@ -328,15 +327,16 @@ with ui.sidebar(open="open", bg="#f8f8f8"):
             l_points.set(updated_points)
             l_outline_width.get().append(0)
     
+    ui.hr(style="margin-top: 5px; margin-bottom: 5px;"),
+
     ui.HTML('<b>Datapoint Removal</b>')
 
-    ui.input_select(  
-        "select_remove",  
-        "Select a datapoint to remove (the latest one will be removed):",  
-        {"Orange": "Orange", "Lemon": "Lemon"},  
+    ui.div(
+        ui.input_select("select_remove", "Select a datapoint to remove (the latest one will be removed):", {"Orange": "Orange", "Lemon": "Lemon"}),
+        ui.input_action_button("remove_dp", "Remove", style="color: #fff; background-color: #337ab7; border-color: #2e6da4; width: 100%; heigth: 70%;"),
+        class_="gap-0"
     )
 
-    ui.input_action_button("remove_dp", "Remove", style="color: #fff; background-color: #337ab7; border-color: #2e6da4; width: 100%;")
     @reactive.effect
     @reactive.event(input.remove_dp)
     def remove_dp():
@@ -362,6 +362,8 @@ with ui.sidebar(open="open", bg="#f8f8f8"):
                 }
                 l_points.set(updated_points)
                 l_outline_width.get().pop()
+
+    ui.hr(style="margin-bottom: 5px;"),
 
     ui.HTML('<b>Split Selection</b>')
     ui.input_switch("vertical", "Vertical Split", True)  
@@ -527,12 +529,12 @@ with ui.layout_columns():
                         </div>
                         
                         <div style="display: flex; justify-content: center;">
-                            <div style="position: relative; text-align: center; margin-left: 220px;">
+                            <div style="position: relative; text-align: center; margin-left: 150px;">
                                 <span style="font-size: 18px; color: #92D050;">Output class (e.g. orange or lemon)</span>
                                 <div style="
                                     position: absolute;
                                     top: -35px;
-                                    left: 60%;
+                                    left: 70%;
                                     transform: translateX(-50%) rotate(5deg);
                                     font-size: 30px;
                                     color: #92D050;">
@@ -545,7 +547,7 @@ with ui.layout_columns():
                                 <div style="
                                     position: absolute;
                                     top: -35px;
-                                    left: 40%;
+                                    left: 58%;
                                     transform: translateX(-50%) rotate(-25deg);
                                     font-size: 30px;
                                     color: #F79709;">
@@ -568,9 +570,9 @@ with ui.layout_columns():
                         </div>
                         
                         <div style="text-align: left; font-size: 18px; font-weight: normal; color: #1F4A89;">
-                            Entropy H(Y): Characterizes the uncertainty in a draw of a random variable<br>
-                            Conditional Entropy H(Y|X): Characterizes the uncertainty in a draw of Y after observing X<br>
-                            Information Gain IG(Y|X): How much information is gained about Y after observing X
+                            <u>Entropy H(Y):</u> Characterizes the uncertainty in a draw of a random variable<br>
+                            <u>Conditional Entropy H(Y|X):</u> Characterizes the uncertainty in a draw of Y after observing X<br>
+                            <u>Information Gain IG(Y|X):</u> How much information is gained about Y after observing X
                         </div>
                     """)
                 )
