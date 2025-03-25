@@ -472,7 +472,7 @@ with ui.layout_columns():
     # Calculations card
     with ui.card():
         ui.card_header(
-            ui.HTML('Calculations <br> <i><span style="font-weight: normal; font-size: 14px;">(Hover over different components of the equation to see where the numbers come from!)</span></i>'),
+            ui.HTML('Calculations <br> <i><span style="font-weight: normal; font-size: 16px;">(Hover over components of the equation to see where the numbers come from!)</span></i>'),
             style="font-size: 20px;"
         )
         @render.ui()
@@ -603,6 +603,7 @@ with ui.layout_columns():
         
         # Helper function to calculate information gain
         def calculate():
+            valid = 1
             side1 = "left" if vertical_split.get() else "below"
             side2 = "right" if vertical_split.get() else "above"
             side1_orange = 0
@@ -624,17 +625,21 @@ with ui.layout_columns():
             total = oranges + lemons
             side1s = side1_orange + side1_lemon
             side2s = side2_orange + side2_lemon
-            h_y = calculate_entropy(lemons, oranges, total)
-            h_yside1 = calculate_entropy(side1_lemon, side1_orange, side1s)
-            h_yside2 = calculate_entropy(side2_lemon, side2_orange, side2s)
-            h_yx = calculate_condent(side1s, side2s, total, h_yside1, h_yside2)
-            infogain = calculate_infogain(h_y, h_yx)
-            info = {'side1': side1, 'side2': side2, 'side1_orange': side1_orange,
-                    'side2_orange': side2_orange, 'side1_lemon': side1_lemon, 'side2_lemon': side2_lemon,
-                    'oranges': oranges, 'lemons': lemons, 'total': total,
-                    'side1s': side1s, 'side2s': side2s, 'h_y': h_y,
-                    'h_yside1': h_yside1, 'h_yside2': h_yside2, 'h_yx': h_yx,
-                    'infogain': infogain}
+            if side1s == 0 or side2s == 0:
+                valid = 0
+                info = {'valid': valid}
+            else:
+                h_y = calculate_entropy(lemons, oranges, total)
+                h_yside1 = calculate_entropy(side1_lemon, side1_orange, side1s)
+                h_yside2 = calculate_entropy(side2_lemon, side2_orange, side2s)
+                h_yx = calculate_condent(side1s, side2s, total, h_yside1, h_yside2)
+                infogain = calculate_infogain(h_y, h_yx)
+                info = {'valid': valid, 'side1': side1, 'side2': side2, 'side1_orange': side1_orange,
+                        'side2_orange': side2_orange, 'side1_lemon': side1_lemon, 'side2_lemon': side2_lemon,
+                        'oranges': oranges, 'lemons': lemons, 'total': total,
+                        'side1s': side1s, 'side2s': side2s, 'h_y': h_y,
+                        'h_yside1': h_yside1, 'h_yside2': h_yside2, 'h_yx': h_yx,
+                        'infogain': infogain}
             return info
 
         # Helper function to make tooltips
@@ -645,7 +650,10 @@ with ui.layout_columns():
         @render.ui
         def calculations_mathjax():
             info = calculate()
-            return ui.HTML(create_mathjax_content(info))
+            if info['valid'] == 1:
+                return ui.HTML(create_mathjax_content(info))
+            else:
+                return ui.HTML('<div style="text-align: center; font-size: 20px; font-weight: normal; color: #1F4A89; line-height: 1;">Invalid split - no information is gained from this split!</div>')
         
         # All these functions are to make correspondings changes to the plot based on user mouse hovering (tooltips)
         @reactive.effect
