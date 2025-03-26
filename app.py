@@ -408,7 +408,7 @@ with ui.layout_columns():
                 mode='markers',
                 name='Orange',
                 marker=dict(
-                    color='#E54C38',
+                    color='#FF7400',
                     size=12,
                     symbol='circle',
                     line=dict(
@@ -424,7 +424,7 @@ with ui.layout_columns():
                 mode='markers',
                 name='Lemon',
                 marker=dict(
-                    color='#4A75D4',
+                    color='#5B1EE5',
                     size=12,
                     symbol='triangle-up',
                     line=dict(
