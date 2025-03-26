@@ -174,6 +174,24 @@ def create_mathjax_content(info):
                 {tooltip_test("Hyx", f"H(Y|X)", f"{info['h_yx']}")}
                 <span>\\(\\approx {info['infogain']}\\)</span>
             </div>
+
+            <script>
+                document.getElementById("Hy").addEventListener("mouseenter", function() {{
+                    Shiny.setInputValue("btn_Hy", "Hovered", {{priority: "event"}});
+                }});
+                document.getElementById("Hy").addEventListener("mouseleave", function() {{
+                    Shiny.setInputValue("btn_Hy", "Not Hovered", {{priority: "event"}});
+                }});
+
+                document.getElementById("Hyx").addEventListener("mouseenter", function() {{
+                    Shiny.setInputValue("btn_Hyx", "Hovered", {{priority: "event"}});
+                }});
+                document.getElementById("Hyx").addEventListener("mouseleave", function() {{
+                    Shiny.setInputValue("btn_Hyx", "Not Hovered", {{priority: "event"}});
+                }});
+
+                updateMathJax();
+            </script>
         """,
         6: f"""
             <div style="text-align: center; font-size: 20px; font-weight: normal; color: #fff; line-height: 1;">
@@ -205,6 +223,7 @@ split_loc = reactive.value(3)
 o_outline_width = reactive.value([0, 0, 0, 0, 0])
 l_outline_width = reactive.value([0, 0])
 step = reactive.value(5)
+show_rect = reactive.value(0)
 rect_coords = reactive.value([0, 0, 0, 0])
 notation = reactive.value(False)
 variables = reactive.value(False)
@@ -655,7 +674,47 @@ with ui.layout_columns():
             else:
                 return ui.HTML('<div style="text-align: center; font-size: 20px; font-weight: normal; color: #1F4A89; line-height: 1;">Invalid split - no information is gained from this split!</div>')
         
+        # Render rectangles
+        # @render.ui
+        # def rectangle_highlights():
+        #     if show_rect.get() == 1:
+        #         return ui.HTML(
+        #             """
+        #             <div id="rectangle" style="width: 400px; height: 50px; background-color: rgb(247, 186, 186); 
+        #                 border: 2px solid rgb(247, 186, 186); visibility: visible; position: absolute; top: 180px; left: 95px;
+        #                 border-radius: 15px; opacity: 0.3;">
+        #             </div>
+        #             """
+        #         )
+        #     if show_rect.get() == 2:
+        #         return ui.HTML(
+        #             """
+        #             <div id="rectangle" style="width: 533px; height: 110px; background-color: rgb(247, 186, 186); 
+        #                 border: 2px solid rgb(247, 186, 186); visibility: visible; position: absolute; top: 235px; left: 30px;
+        #                 border-radius: 15px; opacity: 0.3;">
+        #             </div>
+        #             """
+        #         )
+
         # All these functions are to make correspondings changes to the plot based on user mouse hovering (tooltips)
+        @reactive.effect
+        @reactive.event(input.btn_Hy)
+        def highlight_Hy_eq():
+            tooltip_state = input.btn_Hy()
+            if tooltip_state == "Hovered":
+                show_rect.set(1)
+            else:
+                show_rect.set(0)
+        
+        @reactive.effect
+        @reactive.event(input.btn_Hyx)
+        def highlight_Hyx_eq():
+            tooltip_state = input.btn_Hyx()
+            if tooltip_state == "Hovered":
+                show_rect.set(2)
+            else:
+                show_rect.set(0)
+            
         @reactive.effect
         @reactive.event(input.btn_side2)
         def highlight_side1():
