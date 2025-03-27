@@ -1,5 +1,5 @@
 ### Introduction ###
-A web-based visualization for Decision Tree Models, specifically the Information Gain aspect (CSC311)
+A web-based visualization for Decision Tree Models, specifically the Information Gain calculation aspect (CSC311)
 
 ### Installation ###
 ```
