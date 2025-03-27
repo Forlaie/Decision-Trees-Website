@@ -1,5 +1,5 @@
 ### Introduction ###
-CSC392 project — A website that visualizes decision trees (ML concept)  
+A web-based visualization for Decision Tree Models, specifically the Information Gain aspect (CSC311)
 
 ### Installation ###
 ```
