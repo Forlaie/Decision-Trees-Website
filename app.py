@@ -495,7 +495,7 @@ with ui.layout_columns():
             style="font-size: 20px;"
         )
         @render.ui()
-        def show_stuff():
+        def show_toggling():
             if notation.get():
                 return ui.p(
                     ui.HTML("""
