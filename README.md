@@ -1,5 +1,5 @@
 ### Introduction ###
-A web-based visualization for Decision Tree Models, specifically the Information Gain calculation aspect
+A web-based visualization for Decision Tree Models — specifically the Information Gain calculation aspect.
 
 ### Installation ###
 ```
