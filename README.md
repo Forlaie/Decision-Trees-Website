@@ -81,4 +81,4 @@ If you want to change the calculations, you can do so in these functions.
 The toggling button rendering happens in ```show_toggling```.
 Essentially, I have three reactive values to keep track of which toggle button was pressed (or none), and then use if-statements to render the correct text.
 This requires a lot of HTML and CSS styling, and currently is somewhat hard-coded because the arrow pointing is difficult to work with.
-If you wish to add/remove toggling options, do so there and make a corresponding reactive value.
+If you wish to add/remove toggling options, do so there by make a corresponding reactive value, writing a corresponding if statement, and returning a corresponding ui.HTML.
