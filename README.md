@@ -1,7 +1,12 @@
 CSC392 project — A website that visualizes decision trees (ML concept)  
 
 ### Installation ###
-(double-check how to do this)
+```
+git clone https://github.com/Forlaie/Decision-Trees-Website.git
+pip install -r requirements.txt
+cd Decision-Trees-Website
+python app.py
+```
 
 ### MathJax Equation Content ###
 All MathJax equations are stored and created in the function ```create_mathjax_content```, so if you wish to change the equations or add new text, do so there.
