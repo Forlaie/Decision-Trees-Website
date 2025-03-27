@@ -51,7 +51,7 @@ l_points = reactive.value({'width': [5, 8], 'height': [4, 3]})
 ```
 This is because I want the plotly graph to change reactively, as users add or remove datapoints.
 If you want to add any new features that will update automatically, you must use ```reactive.value```.
-To get the value, you then use ```var_name.get()```, and to change it, you use ```var_name.set(new_value)```.<\br>
+To get the value, you then use ```var_name.get()```, and to change it, you use ```var_name.set(new_value)```.  
 BE CAREFUL IN THE CASE OF DICTIONARIES AND LISTS!!!
 With Python Shiny Express, reactive values only detect changes when the memory location they reference is updated.
 So, for example, if you want to add a new point to o_points and have it register, you *must* make a new dictionary and reassign its value:
