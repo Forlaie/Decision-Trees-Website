@@ -151,4 +151,5 @@ I have a previous step and next step button for the information gain calculation
 Originally, the idea was for the step-by-step to be more detailed — starting from the equation, expanding into the numerical values, and then progressing through each necessary calculation.
 However, due to time constraints, all it does is hide the previous calculation/show the next calculation.
 
-Another
+Another design choice for this feature was to show all the calculations by default so that users can easily skim through the website's visualization without having to click next over and over. This way, they can get a quick overview of the information gain calculations, especially if they're just using it as review material.
+
