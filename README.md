@@ -19,16 +19,23 @@ pip install -r requirements.txt
 cd Decision-Trees-Website
 python app.py
 ```
+# Technical Components #
+This section is mostly focused on my code and how to use/add on to it (e.g. explanations for important helper functions I created).
 
 ### MathJax Equation Content ###
 All MathJax equations are stored and created in the function ```create_mathjax_content```, so if you wish to change the equations or add new text, do so there.
-Note that they're all written in HTML with inline CSS. Also, if you're using MathJax, in order to actually render the MathJax reactively, you *must* include:
+Note that they're all written in HTML with inline CSS. Also, if you're using MathJax and notice that your MathJax isn't rendering properly, you might want to include:
 ```
 <script>
   updateMathJax();
 </script>
 ```
 after your ```</div>```.
+
+This is because occasionally, if you include ```updateMathJax()``` in the wrong place, it won't actually render all of your MathJax text. But, you can't go wrong with including it in your Javascript for every MathJax text.
+
+Example of unrendered MathJax:
+![{79E5A43C-3C47-480E-8054-96468C8DDD32}](https://github.com/user-attachments/assets/e3e984d5-b23f-40ef-b03e-0245ca814d3a)
 
 ### Tooltip Content ###
 Tooltip texts are created using the helper function I made, ```tooltip_test```. This is because Python Shiny Express's built-in tooltip is very difficult to use and customize (do so at the risk of your own sanity...).
