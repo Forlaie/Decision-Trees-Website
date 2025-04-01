@@ -159,6 +159,7 @@ For the data, I decided to use the example that CSC311 students see in their Dec
 ### Tooltip Hovering ###
 In terms of how exactly I emphasize the relationship between the data and the calculations, here is an example of what hovering over an equation would show to the user:
 ![{C3CABF03-D612-4100-8AD9-7B833E3C4C85}](https://github.com/user-attachments/assets/ba304efb-6c80-4cd5-8bad-e65950616730)
+
 To show the denominator, I decided to highlight the side of the graph we're considering. As for the numerator, I chose to outline the specific points that factor into our calculation.
 An alternative choice I could have made is to separate the tooltip highlighting for the numerator and denominator, but I chose not to because I wanted to emphasize the connection between where the numerator’s values come from and what the denominator represents.
 Overall, the combination of highlighting the graph and outlining specific points is meant to clearly show users where the numbers come from and what they represent in the calculation. So for example, in the picture above, the goal is to show "hey, we're trying to find the probability of a datapoint being an orange, given that we're only considering the right side of the split", so that users can get the bigger picture behind these information gain calculations and not get lost by the numbers.
