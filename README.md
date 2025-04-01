@@ -1,5 +1,5 @@
 # Introduction #
-A web-based visualization for Decision Tree Models, focusing specifically on the Information Gain calculation aspect. This visualization demonstrates how information gain is computed for different datasets and split choices, emphasizing how the computation relates to the data. To keep the visualization simple and space-efficient, the data is limited to two-dimensional points within a 10×10 grid.
+A web-based visualization for Decision Tree Models, focusing specifically on the Information Gain calculation aspect. This visualization demonstrates how information gain is computed for different datasets and split choices, emphasizing how the computation relates to the data. For the sake of space and simplicity, the data is limited to 2D points within a 10×10 grid.
 
 ### User-interactivity ###
 - Can add or remove datapoints of two different labels: oranges and lemons
@@ -9,7 +9,10 @@ A web-based visualization for Decision Tree Models, focusing specifically on the
 - Step-by-step walkthrough of calculations by using the "Previous step" and "Next step" buttons at the bottom
 ![{1D942340-F63A-42CB-B2D6-36969757B269}](https://github.com/user-attachments/assets/60729dad-b784-40cb-95a4-b63fe44600e4)
 
-### Installation ###
+### Pre-requisite Knowledge ###
+For users to fully benefit from this visualization, they should have a prior understanding of decision tree models, the algorithm used to construct them, and a basic grasp of entropy. Otherwise, they won't understand the bigger picture behind why information gain calculations are important and how they relate to decision tree models.
+
+# Installation #
 ```
 git clone https://github.com/Forlaie/Decision-Trees-Website.git
 pip install -r requirements.txt
