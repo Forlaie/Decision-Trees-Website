@@ -1,5 +1,7 @@
 ### Introduction ###
 A web-based visualization for Decision Tree Models — specifically the Information Gain calculation aspect.
+![{1D942340-F63A-42CB-B2D6-36969757B269}](https://github.com/user-attachments/assets/60729dad-b784-40cb-95a4-b63fe44600e4)
+
 
 ### Installation ###
 ```
