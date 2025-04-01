@@ -136,8 +136,19 @@ If you want to change the calculations, you can do so in these functions.
 ### Toggling ###
 The toggling button rendering happens in ```show_toggling```.
 Essentially, I have three reactive values to keep track of which toggle button was pressed (or none), and then use if-statements to render the correct text.
-
-# Design Decisions #
-The goal of this visualization is to teach students 
 This requires a lot of HTML and CSS styling, and currently is somewhat hard-coded because the arrow pointing is difficult to work with.
 If you wish to add/remove toggling options, do so there by make a corresponding reactive value, writing a corresponding if statement, and returning a corresponding ui.HTML.
+
+
+# Design Decisions #
+The goal of this visualization is to help users understand how the computations behind information gain are related to the data, so that the math is easier to understand and ideally more intuitive.
+
+### Toggle Buttons ###
+I've created toggle buttons for notation, variables, and definitions. This feature was designed for the sake of user convenience and efficiency; they can get a quick refresher on key concepts and terminology if needed, to help them follow along with the information gain calculations. There's no need to go back and review their notes or google themselves.
+
+### Step-by-Step Calculations ###
+I have a previous step and next step button for the information gain calculations, where users can go through each calculation one-by-one.
+Originally, the idea was for the step-by-step to be more detailed — starting from the equation, expanding into the numerical values, and then progressing through each necessary calculation.
+However, due to time constraints, all it does is hide the previous calculation/show the next calculation.
+
+Another
