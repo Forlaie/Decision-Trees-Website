@@ -1,5 +1,7 @@
 # Introduction #
-A web-based visualization for Decision Tree Models, focusing specifically on the Information Gain calculation aspect. This visualization demonstrates how information gain is computed for different datasets and split choices, emphasizing how the computation relates to the data. For the sake of space and simplicity, the data is limited to 2D points within a 10×10 grid.
+A web-based visualization for Decision Tree Models, focusing specifically on the Information Gain calculation aspect.
+This visualization demonstrates how information gain is computed for different datasets and split choices, emphasizing how the computation relates to the data.
+For the sake of space and simplicity, the data is limited to 2D points within a 10×10 grid.
 
 ### User-interactivity ###
 - Can add or remove datapoints of two different labels: oranges and lemons
@@ -10,7 +12,8 @@ A web-based visualization for Decision Tree Models, focusing specifically on the
 ![{1D942340-F63A-42CB-B2D6-36969757B269}](https://github.com/user-attachments/assets/60729dad-b784-40cb-95a4-b63fe44600e4)
 
 ### Pre-requisite Knowledge ###
-For users to fully benefit from this visualization, they should have a prior understanding of decision tree models, the algorithm used to construct them, and a basic grasp of entropy. Otherwise, they won't understand the bigger picture behind why information gain calculations are important and how they relate to decision tree models.
+For users to fully benefit from this visualization, they should have a prior understanding of decision tree models, the algorithm used to construct them, and a basic grasp of entropy.
+Otherwise, they won't understand the bigger picture behind why information gain calculations are important and how they relate to decision tree models.
 
 # Installation #
 ```
@@ -20,7 +23,7 @@ cd Decision-Trees-Website
 python app.py
 ```
 # Technical Components #
-This section is mostly focused on my code and how to use/add on to it (e.g. explanations for important helper functions I created).
+This section is mostly focused on my code, as in how to use/add on to it, as well as warnings for coding challenges I faced using Python Shiny...
 
 ### MathJax Equation Content ###
 All MathJax equations are stored and created in the function ```create_mathjax_content```, so if you wish to change the equations or add new text, do so there.
@@ -32,15 +35,17 @@ Note that they're all written in HTML with inline CSS. Also, if you're using Mat
 ```
 after your ```</div>```.
 
-This is because occasionally, if you include ```updateMathJax()``` in the wrong place, it won't actually render all of your MathJax text. But, you can't go wrong with including it in your Javascript for every MathJax text.
+This is because if you put ```updateMathJax()``` in the wrong place, it won't actually render all of your MathJax text.
+From my experience, it seems that it works best to include ```updateMathJax()``` in your first instance of MathJax-rendered text, although I'm not sure exactly why that's the case.
+Technically though, you can't go wrong with including it in your JavaScript for every MathJax text. 
 
 Example of unrendered MathJax:
 ![{79E5A43C-3C47-480E-8054-96468C8DDD32}](https://github.com/user-attachments/assets/e3e984d5-b23f-40ef-b03e-0245ca814d3a)
 
 ### Tooltip Content ###
-Tooltip texts are created using the helper function I made, ```tooltip_test```. This is because Python Shiny Express's built-in tooltip is very difficult to use and customize (do so at the risk of your own sanity...).
+Tooltip texts are created using the helper function I made, called ```tooltip_test```.
 To use this, inside your ```<div>```, include ```{tooltip_test("id", "tooltip text", "display text")}```.
-Then, in order to have things happen when you hover over the tooltip, you need:
+Then, in order to be able to register that a user has hovered over your tooltip (and connect it to a button or whatever other component you'd like), you need:
 ```
 <script>
   document.getElementById("id").addEventListener("mouseenter", function() {{
@@ -66,6 +71,33 @@ def do_stuff():
         // do other stuff
 ```
 Note that each item's ```id``` and ```hovering_id``` must be unique.
+
+Now, Python Shiny Express has a built-in tooltip, which can be used by calling ```ui.tooltip()```:
+```
+with ui.tooltip(id="btn_tooltip"):
+    ui.input_action_button("btn", "A button", class_="mt-3")
+    "Tooltip text"
+```
+However, the reason why I made my own helper function was because this built-in tooltip is very difficult to use and customize (do so at the risk of your own sanity...).
+In particular, the biggest challenge I faced was trying to use reactive values within this built-in tooltip.
+Essentially, what I was trying to do was to allow users to hover over specific aspects of the equation, which would then highlight corresponding aspects of the data.
+Now, since all my calculations change as the user modifies the datapoints or makes a new split choice, all these numbers are calculated reactively.
+However, ```ui.tooltip()``` is not a reactive environment, which basically just means that it can't work with reactive values; it can only work with static.
+So, if you wanted to create a tooltip for something that is hard-coded, you can use ```ui.tooltip()```.
+Otherwise, you should use the helper function I've made.
+
+Another big issue with tooltips is that there is no easy way to have the tooltip only correspond to a certain part of your text (e.g. if you had a sentence and only wanted one word to be hoverable with tooltips).
+Hence, I just use a *(admittedly crude)* work-around for this situation. For example, if I want to have the text H(Y) displayed on screen, with only Y being hoverable, I would do this in my JavaScript:
+```
+  <span>\\(H(\\)</span>
+  {tooltip_test("Y", f"Oranges, Lemons", f"Y")}
+  <span>\\()\\)</span>
+```
+Essentially, I create a separate piece of text every time I want to change from tooltip text to non-tooltip text, and then mash everything together in JavaScript so that all the texts are displayed in one line as desired.
+
+# Other Features #
+This section is mostly about how I've implemented different features of my visualization, such as how I handle datapoints and the graph.
+There's far less emphasis on my code and how it works, or why I made certain decisions.
 
 ### Datapoint Modification ###
 Currently, I have my datapoint information stored as reactive values, like such:
@@ -104,5 +136,8 @@ If you want to change the calculations, you can do so in these functions.
 ### Toggling ###
 The toggling button rendering happens in ```show_toggling```.
 Essentially, I have three reactive values to keep track of which toggle button was pressed (or none), and then use if-statements to render the correct text.
+
+# Design Decisions #
+The goal of this visualization is to teach students 
 This requires a lot of HTML and CSS styling, and currently is somewhat hard-coded because the arrow pointing is difficult to work with.
 If you wish to add/remove toggling options, do so there by make a corresponding reactive value, writing a corresponding if statement, and returning a corresponding ui.HTML.
