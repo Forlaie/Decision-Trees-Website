@@ -1,5 +1,12 @@
-### Introduction ###
-A web-based visualization for Decision Tree Models — specifically the Information Gain calculation aspect. This visualization demonstrates information gain calculations for different datasets and different choices of splits, emphasizing how the computation relates to the data. Some decisions made in the visualization, for the sake of space and simplicity, is that we are working with 2D data, and that they all fall within a 10x10 grid. In terms of user interactivity, users can add or remove datapoints of two different labels: oranges and lemons. Users can also choose to place their split horizontally or vertically within the confines of the grid.
+# Introduction #
+A web-based visualization for Decision Tree Models, focusing specifically on the Information Gain calculation aspect. This visualization demonstrates how information gain is computed for different datasets and split choices, emphasizing how the computation relates to the data. To keep the visualization simple and space-efficient, the data is limited to two-dimensional points within a 10×10 grid.
+
+### User-interactivity ###
+- Can add or remove datapoints of two different labels: oranges and lemons
+- Splits can be placed horizontally or vertically within the 10x10 grid
+- Toggle buttons to view notation explanations, variable definitions, and concept definitions if needed
+- Hovering over different parts of the information gain equations will highlight the relevant datapoints used in that calculation, to demonstrate where the numbers are coming from and what we're trying to calculate
+- Step-by-step walkthrough of calculations by using the "Previous step" and "Next step" buttons at the bottom
 ![{1D942340-F63A-42CB-B2D6-36969757B269}](https://github.com/user-attachments/assets/60729dad-b784-40cb-95a4-b63fe44600e4)
 
 ### Installation ###
