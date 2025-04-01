@@ -141,7 +141,7 @@ If you wish to add/remove toggling options, do so there by make a corresponding 
 
 
 # Design Decisions #
-The goal of this visualization is to help users understand how the computations behind information gain are related to the data, so that the math is easier to understand and ideally more intuitive.
+The goal of this visualization is to help users understand how the computations behind information gain are related to the data, so that the math is easier to understand and hopefully more intuitive.
 
 ### Toggle Buttons ###
 I've created toggle buttons for notation, variables, and definitions. This feature was designed for the sake of user convenience and efficiency; they can get a quick refresher on key concepts and terminology if needed, to help them follow along with the information gain calculations. There's no need to go back and review their notes or google themselves.
@@ -151,5 +151,13 @@ I have a previous step and next step button for the information gain calculation
 Originally, the idea was for the step-by-step to be more detailed — starting from the equation, expanding into the numerical values, and then progressing through each necessary calculation.
 However, due to time constraints, all it does is hide the previous calculation/show the next calculation.
 
-Another design choice for this feature was to show all the calculations by default. This way, users can easily skim through the website's visualization and get a quick overview of the information gain calculations, without having to click next over and over (especially if they're just using it as review material, and are already comfortable with the topic).
+Another design choice for this feature was to show all the calculations by default. This way, users can easily skim through the website's visualization and get a quick overview of the information gain calculations, without having to click next over and over, especially if they're just using it as review material and are already comfortable with the topic.
 
+### Data ###
+For the data, I decided to use the example that CSC311 students see in their Decision Trees lecture. This is so that the visualization feels more familiar and easier to connect with what they’ve already learned. So, the default datapoints and split are from the lecture examples. But, I also allow for interactivity in terms of what datapoints are part of the dataset, and what split we're considering, so that users can fully understand just how the data relates to the calculations.
+
+### Tooltip Hovering ###
+In terms of how exactly I emphasize the relationship between the data and the calculations, here is an example of what hovering over an equation would show to the user:
+![{928CF062-A320-469C-BBF1-4335C9558176}](https://github.com/user-attachments/assets/3f5a7c35-a3a8-40ec-903a-00167ec9b3b8)
+To show the denominator, I decided to highlight the side of the graph we're considering. For the numerator, I outline the specific points that factor into the calculation.
+Another alternative choice I could have made is to separate the tooltip highlighting for the numerator and denominator, but I chose not to because I wanted to emphasize the connection between where the numerator’s values come from and what the denominator represents.
