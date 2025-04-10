@@ -1,7 +1,7 @@
 # Introduction #
 A web-based visualization for Decision Tree Models, focusing specifically on the Information Gain calculation aspect.
 This visualization demonstrates how information gain is computed for different datasets and split choices, emphasizing how the computation relates to the data.
-For the sake of space and simplicity, the data is limited to 2D points within a 10×10 grid.
+For the sake of space and simplicity, the data is limited to 2D points within a small grid (10x10).
 
 ### User-interactivity ###
 - Can add or remove datapoints of two different labels: oranges and lemons
@@ -15,6 +15,11 @@ For the sake of space and simplicity, the data is limited to 2D points within a 
 For users to fully benefit from this visualization, they should have a prior understanding of decision tree models, the algorithm used to construct them, and a basic grasp of entropy.
 Otherwise, they won't understand the bigger picture behind why information gain calculations are important and how they relate to decision tree models.
 
+### Learning Objectives ###
+1. Understand the notation used in information gain calculations (e.g., what do X and Y represent?)
+2. Comprehend the origin of the numbers in these calculations (e.g., how was the value 3/5 derived?)
+3. Explore and experiment with different split locations to compare information gains and identify the optimal split
+
 # Installation #
 ```
 git clone https://github.com/Forlaie/Decision-Trees-Website.git
@@ -23,7 +28,12 @@ cd Decision-Trees-Website
 python app.py
 ```
 # Technical Components #
-This section is mostly focused on my code, as in how to use/add on to it, as well as warnings for coding challenges I faced using Python Shiny...
+This section is mostly focused on my code, as in how to use/add on to it, as well as warnings for coding challenges I faced using Python Shiny Express...
+
+### Specifications ###
+- **Frontend:** Python Shiny Express
+- **Equation Rendering:** MathJax
+- **Reactive Buttons:** Javascript
 
 ### MathJax Equation Content ###
 All MathJax equations are stored and created in the function ```create_mathjax_content```, so if you wish to change the equations or add new text, do so there.
@@ -141,7 +151,6 @@ If you wish to add/remove toggling options, do so there by make a corresponding 
 
 
 # Design Decisions #
-The goal of this visualization is to help users understand how the computations behind information gain are related to the data, so that the math is easier to understand and hopefully more intuitive.
 
 ### Toggle Buttons ###
 I've created toggle buttons for notation, variables, and definitions. This feature was designed for the sake of user convenience and efficiency; they can get a quick refresher on key concepts and terminology if needed, to help them follow along with the information gain calculations. There's no need to go back and review their notes or google themselves.
@@ -164,3 +173,22 @@ To show the denominator, I decided to highlight the side of the graph we're cons
 An alternative choice I could have made is to separate the tooltip highlighting for the numerator and denominator, but I chose not to because I wanted to emphasize the connection between where the numerator’s values come from and what the denominator represents.
 
 Overall, the combination of highlighting the graph and outlining specific points is meant to clearly show users where the numbers come from and what they represent in the calculation. So for example, in the picture above, the goal is to show "hey, we're trying to find the probability of a datapoint being an orange, given that we're only considering the right side of the split", so that users can get the bigger picture behind these information gain calculations and not get lost by the numbers.
+
+# Next Steps #
+
+### Calculation Walkthroughs ###
+There should be an option for more detailed, step-by-step calculations for students who want it.
+For example:
+![{8416C0A0-864C-4EB2-810F-D380B93C54D3}](https://github.com/user-attachments/assets/c79e32af-ce7f-4372-bd2c-bb8f9e5eaa88)
+
+where each step of the calculation appears as the student presses "Next".
+
+### Rendering ###
+Currently, the plot fully re-renders each time a tooltip is hovered, causing the plot to disappear and reappear. Ideally, the plot should not disappear; it should simply update to show the highlighted datapoints. My guess is that this is caused by the usage of reactive values with plotly, but I can't say for sure why this occurs.
+
+### User-friendly Format ###
+This visualization was designed with the idea that users would be on a computer, and so it might not work as well on mobile due to the smaller screen-size. You could change the layout of this website to improve the mobile experience.
+Additionally, in general, the website layout could be changed to make it more intuitive for the user to use. For example, currently all the datapoint and split selections are in a collapsible sidebar on the left. But, you could put those elsewhere on the page, to make it more more user-friendly.
+
+### Expanded Scope ###
+This visualization is focused on information gain calculations. However, as decision trees is a wide topic, this visualization could be expanded to cover different aspects of decision tree models that students may find difficult (e.g. why normalization does not impact decision tree performance, parameter choices and how it affects bias and variance...)
