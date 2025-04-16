@@ -61,9 +61,9 @@ def create_mathjax_content(info):
                 <span>\\(|\\)</span>
                 {tooltip_test("X side 1", f"Only looking at the {info['side1']} side of the split", f"X = {info['side1']}")}
                 <span>\\()=-\\)</span>
-                {tooltip_test("Lemons side 1", f"Total lemons {info['side1']} / Total datapoints {info['side1']}", f"\\frac{info['side1_lemon']}{info['side1s']} \\log_{2} \\frac{info['side1_lemon']}{info['side1s']}")}
+                {tooltip_test("Lemons side 1", f"Total lemons ({info['side1']}) / Total datapoints ({info['side1']})", f"\\frac{info['side1_lemon']}{info['side1s']} \\log_{2} \\frac{info['side1_lemon']}{info['side1s']}")}
                 <span>\\(-\\)</span>
-                {tooltip_test("Oranges side 1", f"Total oranges {info['side1']} / Total datapoints {info['side1']}", f"\\frac{info['side1_orange']}{info['side1s']} \\log_{2} \\frac{info['side1_orange']}{info['side1s']}")}
+                {tooltip_test("Oranges side 1", f"Total oranges ({info['side1']}) / Total datapoints ({info['side1']})", f"\\frac{info['side1_orange']}{info['side1s']} \\log_{2} \\frac{info['side1_orange']}{info['side1s']}")}
                 <span>\\( \\approx{info['h_yside1']} \\)
             </div>
 
@@ -99,9 +99,9 @@ def create_mathjax_content(info):
                 <span>\\(|\\)</span>
                 {tooltip_test("X side 2", f"Only looking at the {info['side2']} side of the split", f"X = {info['side2']}")}
                 <span>\\()=-\\)</span>
-                {tooltip_test("Lemons side 2", f"Total lemons {info['side2']} / Total datapoints {info['side2']}", f"\\frac{info['side2_lemon']}{info['side2s']} \\log_{2} \\frac{info['side2_lemon']}{info['side2s']}")}
+                {tooltip_test("Lemons side 2", f"Total lemons ({info['side2']}) / Total datapoints ({info['side2']})", f"\\frac{info['side2_lemon']}{info['side2s']} \\log_{2} \\frac{info['side2_lemon']}{info['side2s']}")}
                 <span>\\(-\\)</span>
-                {tooltip_test("Oranges side 2", f"Total oranges {info['side2']} / Total datapoints {info['side2']}", f"\\frac{info['side2_orange']}{info['side2s']} \\log_{2} \\frac{info['side2_orange']}{info['side2s']}")}
+                {tooltip_test("Oranges side 2", f"Total oranges ({info['side2']}) / Total datapoints ({info['side2']})", f"\\frac{info['side2_orange']}{info['side2s']} \\log_{2} \\frac{info['side2_orange']}{info['side2s']}")}
                 <span>\\( \\approx{info['h_yside2']} \\)
             </div>
 
@@ -214,8 +214,8 @@ def create_mathjax_content(info):
     return mathjax_html
 
 # Starter datapoints to plot and other reactive value setups
-o_points = reactive.value({'x': [1, 1, 5, 8, 8], 'y': [3, 7, 7, 4, 7]})
-l_points = reactive.value({'x': [5, 8], 'y': [4, 3]})
+o_points = reactive.value({'x': [1, 2, 4, 8, 7], 'y': [3, 7, 6, 5, 4]})
+l_points = reactive.value({'x': [5, 8], 'y': [4, 2]})
 x_coord = reactive.value(0)
 y_coord = reactive.value(0)
 vertical_split = reactive.value(True)
@@ -301,6 +301,21 @@ ui.HTML("""
 
 # Sidebar for coordinate and split selection
 with ui.sidebar(open="open", bg="#f8f8f8"):
+    ui.HTML('<b>Split Selection</b>')
+    ui.input_switch("vertical", "Vertical Split", True)  
+    @reactive.effect
+    @reactive.event(input.vertical)
+    def change_split_direction():
+        vertical_split.set(input.vertical())
+    
+    ui.input_slider("split_loc", "Split Location", 0, 10, 3, step=0.5),
+    @reactive.effect
+    @reactive.event(input.split_loc)
+    def change_split_location():
+        split_loc.set(input.split_loc())
+
+    ui.hr(style="margin-bottom: 5px;"),
+
     ui.HTML('<b>Datapoint Selection</b>')
 
     ui.div(
@@ -382,21 +397,6 @@ with ui.sidebar(open="open", bg="#f8f8f8"):
                 l_points.set(updated_points)
                 l_outline_width.get().pop()
 
-    ui.hr(style="margin-bottom: 5px;"),
-
-    ui.HTML('<b>Split Selection</b>')
-    ui.input_switch("vertical", "Vertical Split", True)  
-    @reactive.effect
-    @reactive.event(input.vertical)
-    def change_split_direction():
-        vertical_split.set(input.vertical())
-    
-    ui.input_slider("split_loc", "Split Location", 0, 10, 3),
-    @reactive.effect
-    @reactive.event(input.split_loc)
-    def change_split_location():
-        split_loc.set(input.split_loc())
-
 with ui.layout_columns():
     # Dataset card
     with ui.card():
@@ -406,8 +406,7 @@ with ui.layout_columns():
         def feature_plot():
             fig = go.Figure()
             # fig.update_layout(
-            #     height=400,
-            #     width=700,
+            #     height=500,
             #     margin=dict(t=10, b=10, l=10, r=10)  # Adjust the margins if needed
             # )
             # Highlights from tooltip
@@ -457,6 +456,7 @@ with ui.layout_columns():
                 xaxis=dict(
                     range=[0, 10],
                     fixedrange=True,  # Locks zooming
+                    dtick=1,
                     showgrid=True,
                     gridcolor='rgba(0, 0, 0, 0.1)',
                     gridwidth=1
@@ -464,12 +464,13 @@ with ui.layout_columns():
                 yaxis=dict(
                     range=[0, 10],
                     fixedrange=True,  # Locks zooming
+                    dtick=1,
                     showgrid=True,
                     gridcolor='rgba(0, 0, 0, 0.1)',
                     gridwidth=1
                 ),
-                xaxis_title="Width",
-                yaxis_title="Height",
+                xaxis_title="Width (cm)",
+                yaxis_title="Height (cm)",
                 showlegend=True,
                 plot_bgcolor='white',
                 dragmode=False,  # Disables all drag interactions
@@ -480,9 +481,9 @@ with ui.layout_columns():
 
             # Split location
             if (vertical_split.get()):
-                fig.add_vline(x=split_loc.get(), line=dict(color="purple", width=2, dash="dash"), name="Vertical Line")
+                fig.add_vline(x=split_loc.get(), line=dict(color="blue", width=2, dash="dash"), name="Vertical Line")
             else:
-                fig.add_hline(y=split_loc.get(), line=dict(color="purple", width=2, dash="dash"), name="Horizontal Line")
+                fig.add_hline(y=split_loc.get(), line=dict(color="blue", width=2, dash="dash"), name="Horizontal Line")
             
             return fig
         
@@ -494,6 +495,17 @@ with ui.layout_columns():
             ui.HTML('Calculations <br> <i><span style="font-weight: normal; font-size: 16px;">(Hover over components of the equation to see where the numbers come from!)</span></i>'),
             style="font-size: 20px;"
         )
+
+        # Button to calculate information gain
+        ui.div(
+            ui.div(
+                ui.input_action_button("notation", "Toggle notation", style="color: #fff; background-color: #337ab7; border-color: #2e6da4;"),
+                ui.input_action_button("variables", "Toggle variables", style="color: #fff; background-color: #337ab7; border-color: #2e6da4;"),
+                ui.input_action_button("definition", "Toggle definition", style="color: #fff; background-color: #337ab7; border-color: #2e6da4;"),
+                style="display: flex; justify-content: space-between; gap: 10px;"
+            ),
+        ),
+
         @render.ui()
         def show_toggling():
             if notation.get():
@@ -1040,24 +1052,6 @@ with ui.layout_columns():
                 rect_copy[3] = 0
                 rect_coords.set(rect_copy)
             o_outline_width.set(o_copy)
-        
-        # Button to calculate information gain
-        ui.div(
-            ui.div(
-                ui.input_action_button("notation", "Toggle notation", style="color: #fff; background-color: #337ab7; border-color: #2e6da4;"),
-                ui.input_action_button("variables", "Toggle variables", style="color: #fff; background-color: #337ab7; border-color: #2e6da4;"),
-                ui.input_action_button("definition", "Toggle definition", style="color: #fff; background-color: #337ab7; border-color: #2e6da4;"),
-                style="display: flex; justify-content: space-between; gap: 10px;"
-            ),
-        ),
-        
-        ui.div(
-            ui.div(
-                ui.input_action_button("prev_step", "Previous step", style="color: #fff; background-color: #337ab7; border-color: #2e6da4; width: 100%;"),
-                ui.input_action_button("next_step", "Next step", style="color: #fff; background-color: #337ab7; border-color: #2e6da4; width: 100%;"),
-                style="display: flex; justify-content: space-between; gap: 10px;"
-            ),
-        ),
 
         # Toggle buttons for notation, variables, and definition
         @reactive.effect
