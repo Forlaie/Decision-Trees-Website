@@ -28,7 +28,6 @@ cd Decision-Trees-Website
 python app.py
 ```
 # Technical Components #
-This section is mostly focused on my code, as in how to use/add on to it, as well as warnings for coding challenges I faced using Python Shiny Express...
 
 ### Specifications ###
 - **Frontend:** Python Shiny Express
