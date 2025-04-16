@@ -32,7 +32,7 @@ python app.py
 ### Specifications ###
 - **Frontend:** Python Shiny Express
 - **Equation Rendering:** MathJax
-- **Reactive Buttons:** Javascript
+- **Tooltip Hovering:** Javascript
 
 ### MathJax Equation Content ###
 All MathJax equations are stored and created in the function ```create_mathjax_content```, so if you wish to change the equations or add new text, do so there.
